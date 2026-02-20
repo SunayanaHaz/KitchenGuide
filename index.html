@@ -1,1 +1,434 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>KitchenGuide — Real-Time Operational Guidance</title>
+  <meta name="description" content="KitchenGuide helps every store prepare exactly what they will sell—no more, no less." />
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a class="brand" href="#top" aria-label="KitchenGuide home">
+        <span class="brand-mark">KG</span>
+        <span class="brand-name">KitchenGuide</span>
+      </a>
 
+      <nav class="nav" aria-label="Primary">
+        <a href="#problem">Problem</a>
+        <a href="#solution">Solution</a>
+        <a href="#how">How it works</a>
+        <a href="#metrics">Metrics</a>
+        <a href="#launch">Launch</a>
+        <a href="#pricing">Pricing</a>
+        <a href="#deck">Deck</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="top">
+    <!-- HERO -->
+    <section class="hero">
+      <div class="container hero-grid">
+        <div class="hero-copy">
+          <p class="eyebrow">Real-Time Operational Guidance</p>
+          <h1>Helps every store prepare exactly what they will sell—no more, no less.</h1>
+          <p class="subhead">
+            KitchenGuide is a real-time kitchen decision assistant for regional fast-casual operators,
+            built to reduce perishable food waste without increasing stockouts.
+          </p>
+
+          <div class="cta-row">
+            <a class="btn primary" href="#deck">View the deck</a>
+            <a class="btn" href="#solution">See the solution</a>
+          </div>
+
+          <div class="hero-stats" role="list">
+            <div class="stat" role="listitem">
+              <div class="stat-k">25%</div>
+              <div class="stat-l">target waste reduction via guided prep decisions</div>
+            </div>
+            <div class="stat" role="listitem">
+              <div class="stat-k">$300</div>
+              <div class="stat-l">per store / month pricing model</div>
+            </div>
+            <div class="stat" role="listitem">
+              <div class="stat-k">~2.6×</div>
+              <div class="stat-l">minimum ROI for a typical store</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="hero-card">
+          <div class="card">
+            <h2 class="card-title">Core idea</h2>
+            <p class="card-body">
+              Most waste isn’t caused by bad forecasts—it’s caused by
+              <strong>real-time decision uncertainty</strong> during service.
+              KitchenGuide guides prep decisions at the moment waste is created.
+            </p>
+            <div class="pill-row">
+              <span class="pill">Prep now</span>
+              <span class="pill">Wait</span>
+              <span class="pill">Reduce batch</span>
+            </div>
+          </div>
+
+          <div class="card subtle">
+            <h3 class="card-title">Positioning</h3>
+            <p class="card-body">
+              <strong>Not an analytics tool.</strong> A decision automation layer for
+              consistent execution across locations.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PROBLEM -->
+    <section id="problem" class="section">
+      <div class="container">
+        <h2>Problem</h2>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Waste is a live-ops decision problem</h3>
+            <ul>
+              <li>Regional fast-casual chains can lose <strong>$1.5M+</strong> annually from perishable waste (typical ~40 locations).</li>
+              <li>To avoid stockouts and wait times, kitchens over-prep—even when purchasing forecasts are accurate.</li>
+              <li>POS, inventory, and forecasting show insights, but don’t influence the real-time prep behavior where waste is created.</li>
+            </ul>
+            <p class="callout">
+              The gap: <strong>decision optimization + behavioral compliance</strong> in the kitchen.
+            </p>
+          </div>
+
+          <div class="panel">
+            <h3>Solutions explored</h3>
+            <div class="table">
+              <div class="row head">
+                <div>Approach</div><div>Helps</div><div>Falls short</div>
+              </div>
+              <div class="row">
+                <div>Forecasting tools</div><div>Predict daily demand</div><div>Does not guide live prep decisions</div>
+              </div>
+              <div class="row">
+                <div>Waste tracking</div><div>Show what was wasted</div><div>Too late—waste already occurred</div>
+              </div>
+              <div class="row">
+                <div>Auto-ordering / inventory</div><div>Purchasing accuracy</div><div>Does not control cooking behavior</div>
+              </div>
+              <div class="row">
+                <div>Incentives/training</div><div>Awareness</div><div>Inconsistent, short-term impact</div>
+              </div>
+              <div class="row highlight">
+                <div>Real-time guidance</div><div>Guides prep during service</div><div>Prevents waste at creation</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- AUDIENCE + MARKET -->
+    <section class="section alt">
+      <div class="container">
+        <h2>Who it’s for</h2>
+        <div class="three-col">
+          <div class="card">
+            <h3>Customer (Buyer)</h3>
+            <p><strong>Regional fast-casual chains</strong> operating ~20–80 locations (U.S.).</p>
+            <p>Focus: margin improvement + operational consistency.</p>
+          </div>
+          <div class="card">
+            <h3>Operational Owner</h3>
+            <p><strong>Regional Operations Manager</strong> overseeing ~40 stores.</p>
+            <p>Goal: standardize performance without micromanaging.</p>
+          </div>
+          <div class="card">
+            <h3>Daily Users</h3>
+            <p><strong>Store managers & kitchen staff</strong> making real-time prep decisions during service.</p>
+            <p>Need: simple, clear guidance under pressure.</p>
+          </div>
+        </div>
+
+        <h2 class="mt">Market opportunity (U.S.)</h2>
+        <div class="two-col">
+          <div class="panel">
+            <ul>
+              <li>~150,000 fast-casual restaurant locations in the U.S.</li>
+              <li>~20% belong to regional chains → ~30,000 stores.</li>
+              <li>Initial target segment: ~20,000 tech-adopting operators.</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Go-to-market wedge</h3>
+            <p>
+              Start with regional operators for faster adoption and measurable ROI,
+              then expand once savings are proven.
+            </p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SWOT -->
+    <section class="section">
+      <div class="container">
+        <h2>SWOT snapshot</h2>
+        <div class="swot">
+          <div class="swot-box">
+            <h3>Strengths</h3>
+            <ul>
+              <li>Real-time operational guidance (unique in market)</li>
+              <li>Minimal manual input; frontline-ready interface</li>
+              <li>Quantifiable ROI (waste reduction + margin improvement)</li>
+            </ul>
+          </div>
+          <div class="swot-box">
+            <h3>Opportunities</h3>
+            <ul>
+              <li>Rising AI adoption in restaurant tech</li>
+              <li>Partnerships: POS, procurement, supply chains</li>
+              <li>Sustainability mandates pushing waste reduction</li>
+            </ul>
+          </div>
+          <div class="swot-box">
+            <h3>Weaknesses</h3>
+            <ul>
+              <li>Early-stage adoption risk for conservative operators</li>
+              <li>Need sales effort to educate buyers</li>
+              <li>Limited brand awareness vs incumbents</li>
+            </ul>
+          </div>
+          <div class="swot-box">
+            <h3>Threats</h3>
+            <ul>
+              <li>Competitors adding real-time decision support</li>
+              <li>Incumbents expanding footprints</li>
+              <li>Integration challenges with legacy POS/ERP</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- SOLUTION -->
+    <section id="solution" class="section alt">
+      <div class="container">
+        <h2>Solution</h2>
+        <div class="two-col">
+          <div class="panel">
+            <h3>KitchenGuide: Real-Time Kitchen Decision Assistant</h3>
+            <p>
+              KitchenGuide reduces food waste across all locations by giving each kitchen
+              real-time preparation guidance—so every store prepares exactly what it will sell.
+            </p>
+            <p class="callout">The right food, at the right time, in the right amount.</p>
+
+            <h3 class="mt">Stakeholder value</h3>
+            <ul>
+              <li><strong>Regional operator:</strong> margin improvement & consistency</li>
+              <li><strong>Store manager:</strong> confidence during rush</li>
+              <li><strong>Staff:</strong> less guesswork</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>Product components</h3>
+            <ol class="steps">
+              <li>
+                <strong>Regional Manager Dashboard (Control Layer)</strong><br />
+                Compare waste across stores, identify non-adherence, track margin and consistency.
+              </li>
+              <li>
+                <strong>Prediction & Decision Engine (Intelligence Layer)</strong><br />
+                Forecast demand per ingredient, optimize orders/reorder points, generate live recommendations.
+              </li>
+              <li>
+                <strong>Kitchen Display Tablet (Execution Layer)</strong><br />
+                Simple “Prep / Wait / Reduce” instructions during service.
+              </li>
+            </ol>
+            <p class="mini">Manager controls → Kitchen acts → System learns</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- HOW IT WORKS -->
+    <section id="how" class="section">
+      <div class="container">
+        <h2>How it works</h2>
+        <div class="timeline">
+          <div class="t-item">
+            <h3>1) Predict & plan (before opening)</h3>
+            <ul>
+              <li>Predicts demand per ingredient</li>
+              <li>Calculates optimal order quantities</li>
+              <li>Adjusts reorder points dynamically</li>
+              <li>Flags overstock risk before spoilage</li>
+            </ul>
+          </div>
+          <div class="t-item">
+            <h3>2) Guide live prep (during service)</h3>
+            <ul>
+              <li>Compares actual sales vs expected demand continuously</li>
+              <li>Prompts staff to prep now / wait / reduce batch</li>
+              <li>Prevents “just-in-case” cooking</li>
+            </ul>
+          </div>
+          <div class="t-item">
+            <h3>3) Learn & improve (after closing)</h3>
+            <ul>
+              <li>Shows waste cost by ingredient</li>
+              <li>Identifies over-prep periods</li>
+              <li>Refines next day’s plan</li>
+            </ul>
+          </div>
+        </div>
+        <p class="callout mt">
+          Result: Accurate purchasing + real-time cooking decisions across all stores.
+        </p>
+      </div>
+    </section>
+
+    <!-- METRICS -->
+    <section id="metrics" class="section alt">
+      <div class="container">
+        <h2>Success metrics</h2>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Leading indicators (behavior change)</h3>
+            <ul>
+              <li><strong>Prep-guidance adherence rate:</strong> % followed vs overridden per shift</li>
+              <li><strong>Manual override rate:</strong> overrides ÷ total recommendations</li>
+              <li><strong>Emergency prep events:</strong> unplanned batches cooked during rush</li>
+            </ul>
+          </div>
+          <div class="panel">
+            <h3>Lagging indicators (business impact)</h3>
+            <ul>
+              <li><strong>Perishable waste cost/store:</strong> discarded ingredients vs baseline</li>
+              <li><strong>Stockout incidents:</strong> count of items unavailable during service</li>
+            </ul>
+            <p class="mini">Goal: reduce waste without harming service.</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- LAUNCH -->
+    <section id="launch" class="section">
+      <div class="container">
+        <h2>Launch strategy</h2>
+        <div class="two-col">
+          <div class="panel">
+            <h3>Teams involved</h3>
+            <ul>
+              <li><strong>Customer Service:</strong> 15-minute onboarding + early support</li>
+              <li><strong>Operations:</strong> workflow fit + adoption reinforcement</li>
+              <li><strong>Sales:</strong> recruit operators + set pilot expectations</li>
+              <li><strong>Compliance & Security:</strong> data-sharing approval + role-based access</li>
+              <li><strong>Issue-resolution:</strong> fix incorrect alerts + keep override for trust</li>
+              <li><strong>PR/Ads:</strong> publish pilot results and case studies</li>
+              <li><strong>Education:</strong> training materials for Prep/Wait/Reduce</li>
+            </ul>
+          </div>
+
+          <div class="panel">
+            <h3>Day-1 playbook</h3>
+            <p class="callout">Introduce a safe assistive tool—not a mandate.</p>
+            <ul>
+              <li><strong>Before opening:</strong> setup + team alignment</li>
+              <li><strong>During service:</strong> staff signals for smooth operations</li>
+              <li><strong>After closing:</strong> review + reflection</li>
+              <li><strong>Success criteria:</strong> goals for effective opening day</li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRICING / FINANCIALS -->
+    <section id="pricing" class="section alt">
+      <div class="container">
+        <h2>Revenue & profitability model</h2>
+        <div class="three-col">
+          <div class="card">
+            <h3>Pricing (per store)</h3>
+            <p class="big"><strong>$300</strong> / month</p>
+            <p class="mini">$3,600 / year. Volume: $250 / month for large chains.</p>
+          </div>
+
+          <div class="card">
+            <h3>Customer ROI</h3>
+            <ul>
+              <li>Avg waste: <strong>$37,500</strong> / year</li>
+              <li>25% reduction → <strong>$9,375</strong> saved</li>
+              <li>~<strong>2.6×</strong> ROI minimum</li>
+            </ul>
+          </div>
+
+          <div class="card">
+            <h3>Adoption path</h3>
+            <p><strong>Land → Prove → Expand</strong></p>
+            <p class="mini">Pilot → proof of savings → 40-store rollout → multi-region expansion</p>
+          </div>
+        </div>
+
+        <div class="panel mt">
+          <h3>ARR projection</h3>
+          <div class="table">
+            <div class="row head"><div>Year</div><div>Stores</div><div>ARR</div></div>
+            <div class="row"><div>Y1</div><div>150</div><div>~$540K</div></div>
+            <div class="row"><div>Y2</div><div>500</div><div>~$1.8M</div></div>
+            <div class="row"><div>Y3</div><div>1,500</div><div>~$5.4M</div></div>
+          </div>
+          <p class="mini mt">
+            We charge a fraction of the value created; the main challenge is sales cycle and implementation change management.
+          </p>
+        </div>
+      </div>
+    </section>
+
+    <!-- EMBED DECK -->
+    <section id="deck" class="section">
+      <div class="container">
+        <h2>Deck</h2>
+        <p class="mini">
+          Optional: put your PDF at <code>assets/TheDecoders.pdf</code> to enable the embedded viewer below.
+        </p>
+
+        <div class="embed">
+          <iframe
+            title="KitchenGuide Deck"
+            src="assets/TheDecoders.pdf"
+            loading="lazy">
+          </iframe>
+        </div>
+
+        <p class="mini mt">
+          If the embed doesn’t load (some browsers block PDFs), link directly:
+          <a href="assets/TheDecoders.pdf">Open the PDF</a>.
+        </p>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="container footer-inner">
+        <div>
+          <div class="brand small">
+            <span class="brand-mark">KG</span>
+            <span class="brand-name">KitchenGuide</span>
+          </div>
+          <p class="mini">Real-time operational guidance for fast-casual kitchens.</p>
+        </div>
+        <div class="mini">
+          <p><strong>Presented by:</strong> Anjuta, Sunayana, Suneeta, Upendra</p>
+        </div>
+      </div>
+    </footer>
+  </main>
+</body>
+</html>
