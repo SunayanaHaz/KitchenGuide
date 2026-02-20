@@ -2,433 +2,1430 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>KitchenGuide — Real-Time Operational Guidance</title>
-  <meta name="description" content="KitchenGuide helps every store prepare exactly what they will sell—no more, no less." />
-  <link rel="stylesheet" href="styles.css" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>KitchenGuide — Operations Intelligence</title>
+  <meta name="description" content="KitchenGuide — Operations Intelligence demo dashboard (single file, GitHub Pages ready)." />
+
+  <!-- Fonts -->
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@300;400;500;600;700;800&family=IBM+Plex+Mono:wght@400;500;600&family=Lora:ital,wght@0,600;1,400&display=swap">
+
+  <style>
+    /* ── CSS (ported from your React version, simplified) ───────────────────── */
+    @keyframes pulse3   { 0%,100%{opacity:1}50%{opacity:.4} }
+    @keyframes slideUp2 { from{opacity:0;transform:translateY(10px)} to{opacity:1;transform:none} }
+    @keyframes alertPulse { 0%,100%{box-shadow:0 0 0 0 rgba(239,68,68,0)} 50%{box-shadow:0 0 0 8px rgba(239,68,68,.12)} }
+    @keyframes spin2    { to{transform:rotate(360deg)} }
+    @keyframes countUp2 { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:none} }
+    @keyframes fadeIn2  { from{opacity:0} to{opacity:1} }
+
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { height:100%; }
+
+    :root {
+      --bg:      #F4F1EB;
+      --bg2:     #FDFCFA;
+      --bg3:     #EDE9E0;
+      --panel:   #FFFFFF;
+      --sidebar: #1C2333;
+      --sidebar2:#242D42;
+      --border:  #E2DDD4;
+      --border2: #C8C2B6;
+      --amber:   #D97706;
+      --amber2:  #F59E0B;
+      --amber3:  #FEF3C7;
+      --red:     #EF4444;
+      --red2:    #FEE2E2;
+      --green:   #22C55E;
+      --green2:  #DCFCE7;
+      --blue:    #3B82F6;
+      --blue2:   #EFF6FF;
+      --text:    #1A1A2E;
+      --text2:   #4A5568;
+      --text3:   #9CA3AF;
+      --mono:    'IBM Plex Mono', monospace;
+      --sans:    'Sora', sans-serif;
+      --serif:   'Lora', serif;
+      --r:       8px;
+      --rs:      5px;
+    }
+
+    body {
+      font-family:var(--sans);
+      background:var(--bg);
+      color:var(--text);
+      -webkit-font-smoothing:antialiased;
+      font-size:14px;
+    }
+
+    ::-webkit-scrollbar { width:5px; height:5px; }
+    ::-webkit-scrollbar-track { background:var(--bg3); }
+    ::-webkit-scrollbar-thumb { background:var(--border2); border-radius:3px; }
+
+    .app { display:flex; height:100vh; overflow:hidden; }
+
+    /* SIDEBAR */
+    .sb { width:240px; min-width:240px; background:var(--sidebar); color:#CBD5E1;
+          display:flex; flex-direction:column; overflow:hidden; }
+    .sb-logo { padding:20px 20px 16px; border-bottom:1px solid rgba(255,255,255,.07); }
+    .sb-logo-t { font-family:var(--serif); font-style:italic; font-size:20px; color:#fff; }
+    .sb-logo-s { font-family:var(--mono); font-size:9px; color:#64748B; letter-spacing:2px;
+                 text-transform:uppercase; margin-top:3px; }
+
+    .sb-loc { padding:14px 16px; border-bottom:1px solid rgba(255,255,255,.07); }
+    .sb-loc-label { font-size:9px; color:#64748B; text-transform:uppercase; letter-spacing:1.5px;
+                    margin-bottom:6px; font-weight:600; }
+    .loc-search { width:100%; background:rgba(255,255,255,.07); border:1px solid rgba(255,255,255,.1);
+                  color:#E2E8F0; font-family:var(--sans); font-size:11px; padding:7px 10px;
+                  border-radius:var(--rs); outline:none; margin-bottom:6px; }
+    .loc-search::placeholder { color:#475569; }
+    .loc-search:focus { border-color:rgba(217,119,6,.5); }
+    .loc-list { overflow-y:auto; max-height:280px; }
+    .loc-item { padding:7px 10px; cursor:pointer; border-radius:var(--rs); font-size:11px;
+                color:#94A3B8; transition:all .12s; display:flex; align-items:center;
+                justify-content:space-between; margin-bottom:1px; }
+    .loc-item:hover { background:rgba(255,255,255,.06); color:#E2E8F0; }
+    .loc-item.active { background:rgba(217,119,6,.2); color:#FBB040; border-left:2px solid #D97706; }
+    .loc-id { font-family:var(--mono); font-size:9px; opacity:.5; }
+
+    .sb-nav { padding:12px 0; border-top:1px solid rgba(255,255,255,.07); }
+    .sb-nav-item { display:flex; align-items:center; gap:10px; padding:9px 20px;
+                   cursor:pointer; font-size:12px; color:#64748B; border-left:2px solid transparent;
+                   transition:all .12s; font-weight:500; }
+    .sb-nav-item:hover { color:#94A3B8; background:rgba(255,255,255,.03); }
+    .sb-nav-item.active { color:#FBB040; background:rgba(217,119,6,.12); border-left-color:#D97706; }
+    .sb-icon { font-size:14px; width:18px; text-align:center; }
+
+    .sb-foot { padding:14px 20px; border-top:1px solid rgba(255,255,255,.07); margin-top:auto; }
+    .live-dot { width:6px; height:6px; border-radius:50%; background:#22C55E; display:inline-block;
+                margin-right:6px; animation:pulse3 2s infinite; }
+    .sb-status { font-size:10px; color:#475569; }
+    .sb-chain { font-family:var(--mono); font-size:10px; color:#FBB040; margin-bottom:4px;
+                font-weight:600; }
+
+    /* MAIN */
+    .main { flex:1; display:flex; flex-direction:column; overflow:hidden; }
+    .topbar { height:56px; min-height:56px; background:var(--panel); border-bottom:1px solid var(--border);
+              display:flex; align-items:center; padding:0 24px; gap:12px;
+              box-shadow:0 1px 3px rgba(0,0,0,.06); }
+    .tb-title { font-size:16px; font-weight:700; flex:1; color:var(--text); }
+    .tb-sub   { font-size:11px; color:var(--text3); margin-top:1px; }
+
+    .chip { display:inline-flex; align-items:center; font-family:var(--mono); font-size:10px;
+            font-weight:600; padding:3px 9px; border-radius:var(--rs); white-space:nowrap;
+            letter-spacing:.3px; }
+    .chip-amber { background:var(--amber3); color:var(--amber); border:1px solid #FDE68A; }
+    .chip-red   { background:var(--red2);   color:var(--red);   border:1px solid #FECACA; }
+    .chip-green { background:var(--green2); color:#16A34A;      border:1px solid #BBF7D0; }
+    .chip-blue  { background:var(--blue2);  color:var(--blue);  border:1px solid #BFDBFE; }
+    .chip-gray  { background:var(--bg3);    color:var(--text3); border:1px solid var(--border); }
+
+    .content { flex:1; overflow-y:auto; padding:20px 24px; background:var(--bg); }
+
+    /* GRID */
+    .g4 { display:grid; grid-template-columns:repeat(4,1fr); gap:14px; margin-bottom:18px; }
+    .g3 { display:grid; grid-template-columns:repeat(3,1fr); gap:14px; margin-bottom:18px; }
+    .g2 { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:18px; }
+    .g21{ display:grid; grid-template-columns:2fr 1fr; gap:14px; margin-bottom:18px; }
+
+    @media (max-width: 1040px){
+      .g4 { grid-template-columns:repeat(2,1fr); }
+      .g3 { grid-template-columns:repeat(2,1fr); }
+      .g21{ grid-template-columns:1fr; }
+    }
+    @media (max-width: 760px){
+      .app { flex-direction:column; }
+      .sb { width:100%; min-width:100%; height:auto; }
+      .loc-list { max-height:180px; }
+      .topbar { padding:0 12px; }
+      .content { padding:14px 12px; }
+      .g4, .g3, .g2 { grid-template-columns:1fr; }
+    }
+
+    /* TILES */
+    .tile { background:var(--panel); border:1px solid var(--border); border-radius:var(--r);
+            padding:16px; position:relative; overflow:hidden; transition:box-shadow .2s; }
+    .tile:hover { box-shadow:0 2px 12px rgba(0,0,0,.08); }
+    .tile::after { content:''; position:absolute; bottom:0; left:0; right:0; height:3px;
+                   background:var(--t-accent,var(--amber)); opacity:.7; }
+    .tile-label { font-size:10px; text-transform:uppercase; letter-spacing:1.3px; color:var(--text3);
+                  font-weight:700; margin-bottom:8px; }
+    .tile-val   { font-family:var(--mono); font-size:28px; font-weight:600; line-height:1;
+                  animation:countUp2 .4s ease; }
+    .tile-sub   { font-size:11px; color:var(--text3); margin-top:5px; line-height:1.4; }
+    .tile-icon  { position:absolute; top:14px; right:14px; font-size:22px; opacity:.15; }
+
+    /* CARDS */
+    .card { background:var(--panel); border:1px solid var(--border); border-radius:var(--r);
+            overflow:hidden; margin-bottom:14px; box-shadow:0 1px 3px rgba(0,0,0,.04); }
+    .card-hd { padding:13px 16px; border-bottom:1px solid var(--border);
+               display:flex; align-items:center; justify-content:space-between; gap:10px; }
+    .card-title { font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:1px;
+                  color:var(--text2); }
+    .card-body { padding:16px; }
+
+    .section-label { font-size:12px; font-weight:700; color:var(--text2); text-transform:uppercase;
+                     letter-spacing:1.2px; margin-bottom:12px; display:flex; align-items:center; gap:8px; }
+    .section-label::after { content:''; flex:1; height:1px; background:var(--border); }
+
+    /* TABLE */
+    .tbl { width:100%; border-collapse:collapse; font-size:12px; }
+    .tbl th { text-align:left; padding:8px 12px; font-size:9px; text-transform:uppercase;
+              letter-spacing:1.2px; color:var(--text3); border-bottom:1px solid var(--border);
+              font-weight:700; background:var(--bg); white-space:nowrap; }
+    .tbl td { padding:10px 12px; border-bottom:1px solid var(--border); vertical-align:middle; }
+    .tbl tr:last-child td { border-bottom:none; }
+    .tbl tr:hover td { background:var(--bg3); }
+
+    /* WRI / CONF */
+    .wri-b { display:inline-flex; align-items:center; gap:5px; font-family:var(--mono);
+             font-size:10px; font-weight:700; padding:3px 8px; border-radius:4px; }
+    .wri-bar { height:5px; background:var(--bg3); border-radius:3px; overflow:hidden; }
+    .wri-bar-f { height:100%; border-radius:3px; transition:width .5s ease; }
+    .conf-bar { height:4px; background:var(--bg3); border-radius:2px; overflow:hidden; }
+    .conf-bar-f { height:100%; border-radius:2px; transition:width .5s ease; }
+
+    /* Sparkline */
+    .sparkline { display:flex; align-items:flex-end; gap:3px; height:36px; }
+    .spark-bar { flex:1; border-radius:2px 2px 0 0; min-width:4px; transition:height .4s ease; }
+
+    /* Alerts */
+    .alert-card { border-radius:var(--r); padding:13px 14px; margin-bottom:10px;
+                  display:flex; align-items:flex-start; gap:12px;
+                  animation:slideUp2 .3s ease; border:1px solid; }
+    .alert-hold  { background:#FFF7ED; border-color:#FED7AA; }
+    .alert-prep  { background:#F0FDF4; border-color:#BBF7D0; }
+    .alert-delay { background:#FFF1F2; border-color:#FECDD3; animation:alertPulse 2s infinite; }
+    .alert-icon  { font-size:18px; flex-shrink:0; }
+    .alert-title { font-size:12px; font-weight:700; margin-bottom:3px; }
+    .alert-body  { font-size:11px; color:var(--text2); line-height:1.55; }
+    .alert-meta  { font-size:10px; color:var(--text3); margin-top:4px; font-family:var(--mono); }
+    .alert-badge { font-family:var(--mono); font-size:9px; font-weight:700; padding:2px 7px;
+                   border-radius:3px; margin-left:auto; flex-shrink:0; }
+    .badge-hold  { background:#FED7AA; color:#C2410C; }
+    .badge-prep  { background:#BBF7D0; color:#15803D; }
+    .badge-delay { background:#FECDD3; color:#BE123C; }
+
+    /* Buttons */
+    .btn { display:inline-flex; align-items:center; gap:6px; padding:7px 14px;
+           border-radius:var(--rs); font-size:12px; font-weight:600; cursor:pointer;
+           border:none; transition:all .14s; font-family:var(--sans); white-space:nowrap; }
+    .btn-amber { background:var(--amber); color:#fff; }
+    .btn-amber:hover { background:#B45309; }
+    .btn-ghost { background:transparent; color:var(--text2); border:1px solid var(--border2); }
+    .btn-ghost:hover { background:var(--bg3); }
+    .btn-green { background:#16A34A; color:#fff; }
+    .btn-green:hover { background:#15803D; }
+    .btn-sm { padding:4px 10px; font-size:11px; }
+    .btn:disabled { opacity:.4; cursor:not-allowed; }
+
+    .spin { width:16px; height:16px; border:2px solid var(--border);
+            border-top-color:var(--amber); border-radius:50%;
+            animation:spin2 .7s linear infinite; display:inline-block; }
+
+    .ai-loading { display:flex; align-items:center; gap:10px; padding:16px;
+                  color:var(--text3); font-size:12px; }
+
+    .tag { display:inline-flex; align-items:center; font-size:10px; padding:2px 7px;
+           border-radius:3px; font-weight:600; font-family:var(--mono); }
+    .tag-g { background:var(--green2); color:#15803D; }
+    .tag-a { background:var(--amber3); color:#92400E; }
+    .tag-r { background:var(--red2);   color:#991B1B; }
+
+    .qty-in { width:64px; background:var(--bg3); border:1px solid var(--border2);
+              color:var(--text); font-family:var(--mono); font-size:12px;
+              padding:5px 8px; border-radius:4px; text-align:center; outline:none;
+              transition:border-color .14s; }
+    .qty-in:focus { border-color:var(--amber); }
+
+    .heatmap-grid { display:grid; grid-template-columns:repeat(8,1fr); gap:4px; }
+    .heat-cell { aspect-ratio:1; border-radius:3px; cursor:pointer; transition:transform .12s;
+                 display:flex; align-items:center; justify-content:center; font-size:8px;
+                 font-family:var(--mono); font-weight:600; }
+    .heat-cell:hover { transform:scale(1.10); }
+
+    .ai-box { background:linear-gradient(135deg,#FFFBEB,#FFF7ED); border:1px solid #FDE68A;
+              border-radius:var(--r); padding:14px 16px; margin-bottom:14px;
+              animation:fadeIn2 .3s ease; }
+    .ai-box-title { font-size:11px; font-weight:700; color:var(--amber); margin-bottom:6px;
+                    text-transform:uppercase; letter-spacing:.8px; display:flex; align-items:center; gap:6px; }
+    .ai-box-body { font-size:12px; color:var(--text2); line-height:1.7; }
+
+    .view-wrap { animation:fadeIn2 .18s ease; }
+
+    a { color: var(--blue); text-decoration: none; }
+    a:hover { text-decoration: underline; }
+
+    .muted { color: var(--text3); }
+  </style>
 </head>
+
 <body>
-  <header class="site-header">
-    <div class="container header-inner">
-      <a class="brand" href="#top" aria-label="KitchenGuide home">
-        <span class="brand-mark">KG</span>
-        <span class="brand-name">KitchenGuide</span>
-      </a>
+  <div class="app">
+    <!-- SIDEBAR -->
+    <aside class="sb">
+      <div class="sb-logo">
+        <div class="sb-logo-t">KitchenGuide</div>
+        <div class="sb-logo-s">Operations Intelligence</div>
+      </div>
 
-      <nav class="nav" aria-label="Primary">
-        <a href="#problem">Problem</a>
-        <a href="#solution">Solution</a>
-        <a href="#how">How it works</a>
-        <a href="#metrics">Metrics</a>
-        <a href="#launch">Launch</a>
-        <a href="#pricing">Pricing</a>
-        <a href="#deck">Deck</a>
-      </nav>
+      <div class="sb-loc">
+        <div class="sb-loc-label">Store Location (<span id="locCount"></span> WA)</div>
+        <input id="locSearch" class="loc-search" placeholder="Search city or store…" />
+        <div id="locList" class="loc-list"></div>
+      </div>
+
+      <nav id="nav" class="sb-nav"></nav>
+
+      <div class="sb-foot">
+        <div class="sb-chain">40 Locations · Washington State</div>
+        <div style="display:flex; align-items:center;">
+          <span class="live-dot"></span>
+          <span class="sb-status">Live · <span id="dateStr"></span> · <span id="timeStr"></span></span>
+        </div>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <div class="main">
+      <header class="topbar">
+        <div style="flex:1;">
+          <div class="tb-title" id="topTitle"></div>
+          <div class="tb-sub" id="topSub"></div>
+        </div>
+        <span id="chipLoc" class="chip chip-amber" style="display:none;"></span>
+        <span id="chipCity" class="chip chip-gray" style="display:none;"></span>
+        <span class="chip chip-green">≥98% Availability</span>
+        <span class="chip chip-blue">AI Powered</span>
+      </header>
+
+      <div id="content" class="content"></div>
     </div>
-  </header>
+  </div>
 
-  <main id="top">
-    <!-- HERO -->
-    <section class="hero">
-      <div class="container hero-grid">
-        <div class="hero-copy">
-          <p class="eyebrow">Real-Time Operational Guidance</p>
-          <h1>Helps every store prepare exactly what they will sell—no more, no less.</h1>
-          <p class="subhead">
-            KitchenGuide is a real-time kitchen decision assistant for regional fast-casual operators,
-            built to reduce perishable food waste without increasing stockouts.
-          </p>
+  <script>
+    // ── DATA: WA LOCATIONS ────────────────────────────────────────────────────
+    const WA_LOCATIONS = [
+      { id:1,  name:"Seattle Downtown",    city:"Seattle",      region:"King County",    lat:47.60, lng:-122.33 },
+      { id:2,  name:"Seattle Capitol Hill",city:"Seattle",      region:"King County",    lat:47.62, lng:-122.31 },
+      { id:3,  name:"Seattle Ballard",     city:"Seattle",      region:"King County",    lat:47.67, lng:-122.38 },
+      { id:4,  name:"Seattle Fremont",     city:"Seattle",      region:"King County",    lat:47.65, lng:-122.35 },
+      { id:5,  name:"Seattle SoDo",        city:"Seattle",      region:"King County",    lat:47.58, lng:-122.33 },
+      { id:6,  name:"Bellevue Main",       city:"Bellevue",     region:"King County",    lat:47.61, lng:-122.20 },
+      { id:7,  name:"Bellevue Crossroads", city:"Bellevue",     region:"King County",    lat:47.62, lng:-122.17 },
+      { id:8,  name:"Redmond Center",      city:"Redmond",      region:"King County",    lat:47.67, lng:-122.12 },
+      { id:9,  name:"Kirkland Marina",     city:"Kirkland",     region:"King County",    lat:47.68, lng:-122.21 },
+      { id:10, name:"Renton Valley",       city:"Renton",       region:"King County",    lat:47.48, lng:-122.21 },
+      { id:11, name:"Tacoma Central",      city:"Tacoma",       region:"Pierce County",  lat:47.25, lng:-122.44 },
+      { id:12, name:"Tacoma Stadium",      city:"Tacoma",       region:"Pierce County",  lat:47.26, lng:-122.45 },
+      { id:13, name:"Federal Way",         city:"Federal Way",  region:"King County",    lat:47.32, lng:-122.31 },
+      { id:14, name:"Kent Station",        city:"Kent",         region:"King County",    lat:47.38, lng:-122.23 },
+      { id:15, name:"Auburn Main",         city:"Auburn",       region:"King County",    lat:47.30, lng:-122.23 },
+      { id:16, name:"Olympia Capitol",     city:"Olympia",      region:"Thurston County",lat:47.04, lng:-122.90 },
+      { id:17, name:"Tumwater Center",     city:"Tumwater",     region:"Thurston County",lat:46.99, lng:-122.91 },
+      { id:18, name:"Lacey Gateway",       city:"Lacey",        region:"Thurston County",lat:47.03, lng:-122.82 },
+      { id:19, name:"Puyallup Main",       city:"Puyallup",     region:"Pierce County",  lat:47.18, lng:-122.29 },
+      { id:20, name:"Sumner Hub",          city:"Sumner",       region:"Pierce County",  lat:47.20, lng:-122.24 },
+      { id:21, name:"Everett Downtown",    city:"Everett",      region:"Snohomish County",lat:47.97, lng:-122.20 },
+      { id:22, name:"Everett Mall",        city:"Everett",      region:"Snohomish County",lat:47.91, lng:-122.22 },
+      { id:23, name:"Marysville Main",     city:"Marysville",   region:"Snohomish County",lat:48.05, lng:-122.18 },
+      { id:24, name:"Lynnwood Center",     city:"Lynnwood",     region:"Snohomish County",lat:47.82, lng:-122.32 },
+      { id:25, name:"Mountlake Terrace",   city:"Mountlake Terrace",region:"Snohomish County",lat:47.79, lng:-122.31 },
+      { id:26, name:"Spokane Downtown",    city:"Spokane",      region:"Spokane County",  lat:47.65, lng:-117.43 },
+      { id:27, name:"Spokane Valley",      city:"Spokane Valley",region:"Spokane County", lat:47.67, lng:-117.24 },
+      { id:28, name:"Spokane North",       city:"Spokane",      region:"Spokane County",  lat:47.73, lng:-117.42 },
+      { id:29, name:"Vancouver Central",   city:"Vancouver",    region:"Clark County",    lat:45.63, lng:-122.67 },
+      { id:30, name:"Vancouver Hazel Dell",city:"Vancouver",    region:"Clark County",    lat:45.68, lng:-122.67 },
+      { id:31, name:"Bellingham Main",     city:"Bellingham",   region:"Whatcom County",  lat:48.75, lng:-122.47 },
+      { id:32, name:"Bellingham Meridian", city:"Bellingham",   region:"Whatcom County",  lat:48.77, lng:-122.46 },
+      { id:33, name:"Kennewick Center",    city:"Kennewick",    region:"Benton County",   lat:46.21, lng:-119.13 },
+      { id:34, name:"Pasco Main",          city:"Pasco",        region:"Franklin County",  lat:46.24, lng:-119.10 },
+      { id:35, name:"Richland Gateway",    city:"Richland",     region:"Benton County",   lat:46.28, lng:-119.28 },
+      { id:36, name:"Yakima Central",      city:"Yakima",       region:"Yakima County",   lat:46.60, lng:-120.51 },
+      { id:37, name:"Yakima East",         city:"Yakima",       region:"Yakima County",   lat:46.59, lng:-120.48 },
+      { id:38, name:"Wenatchee Main",      city:"Wenatchee",    region:"Chelan County",   lat:47.42, lng:-120.31 },
+      { id:39, name:"Walla Walla Center",  city:"Walla Walla",  region:"Walla Walla County",lat:46.06, lng:-118.34 },
+      { id:40, name:"Pullman WSU",         city:"Pullman",      region:"Whitman County",  lat:46.73, lng:-117.18 },
+    ];
 
-          <div class="cta-row">
-            <a class="btn primary" href="#deck">View the deck</a>
-            <a class="btn" href="#solution">See the solution</a>
+    // ── MENU + INGREDIENTS ────────────────────────────────────────────────────
+    const MENU_ITEMS = [
+      { id:"burger",    name:"Burger",           emoji:"🍔", color:"#E8913A" },
+      { id:"fries",     name:"Fries",            emoji:"🍟", color:"#F5C842" },
+      { id:"chicken",   name:"Chicken Sandwich", emoji:"🥪", color:"#D4845A" },
+      { id:"beverages", name:"Beverages",        emoji:"🥤", color:"#5BA8D4" },
+      { id:"sides",     name:"Sides & Others",   emoji:"🥗", color:"#7DC67A" },
+    ];
+
+    const INGREDIENTS = [
+      { id:"beef",      name:"Ground Beef",    unit:"lbs",   cost:4.10, shelf:2,   menu:["burger"] },
+      { id:"bun",       name:"Burger Buns",    unit:"pcs",   cost:0.35, shelf:5,   menu:["burger","chicken"] },
+      { id:"lettuce",   name:"Romaine Lettuce",unit:"lbs",   cost:2.20, shelf:5,   menu:["burger","chicken","sides"] },
+      { id:"tomato",    name:"Roma Tomatoes",  unit:"lbs",   cost:1.80, shelf:6,   menu:["burger","chicken","sides"] },
+      { id:"cheese",    name:"Cheddar Cheese", unit:"lbs",   cost:5.50, shelf:14,  menu:["burger","chicken","sides"] },
+      { id:"potato",    name:"Russet Potatoes",unit:"lbs",   cost:0.65, shelf:21,  menu:["fries","sides"] },
+      { id:"fry_oil",   name:"Frying Oil",     unit:"gal",   cost:8.20, shelf:60,  menu:["fries","chicken"] },
+      { id:"chicken_b", name:"Chicken Breast", unit:"lbs",   cost:3.40, shelf:3,   menu:["chicken"] },
+      { id:"pickle",    name:"Pickles",        unit:"jars",  cost:2.80, shelf:90,  menu:["burger","chicken"] },
+      { id:"syrup",     name:"Fountain Syrup", unit:"box",   cost:28.0, shelf:180, menu:["beverages"] },
+      { id:"cups",      name:"Paper Cups",     unit:"sleeve",cost:3.50, shelf:365, menu:["beverages"] },
+      { id:"coleslaw",  name:"Coleslaw Mix",   unit:"lbs",   cost:1.90, shelf:4,   menu:["sides"] },
+      { id:"sauce",     name:"Special Sauce",  unit:"lbs",   cost:4.20, shelf:10,  menu:["burger","chicken","sides"] },
+      { id:"onion",     name:"Yellow Onions",  unit:"lbs",   cost:1.10, shelf:14,  menu:["burger","sides"] },
+    ];
+
+    // ── GENERATORS ───────────────────────────────────────────────────────────
+    function seed(locId, ingId = 0, extra = 1) {
+      return ((locId * 37 + ingId * 13) * extra) % 1;
+    }
+
+    function genLocationData(loc) {
+      const HOUR = new Date().getHours();
+      const DOW  = new Date().getDay(); // 0=Sun
+      const s = loc.id;
+
+      const isWeekend = DOW === 0 || DOW === 6;
+      const isLunch   = HOUR >= 11 && HOUR <= 14;
+      const isDinner  = HOUR >= 17 && HOUR <= 20;
+
+      const peakMult   = isLunch || isDinner ? 1.35 : isWeekend ? 1.2 : 1.0;
+      const regionMult = loc.region === "King County" ? 1.3 : loc.city === "Pullman" ? 1.6 : 1.0;
+
+      const menuDemand = {};
+      MENU_ITEMS.forEach(m => {
+        const base = 18 + Math.round(((s * 7 + m.id.length * 11) % 32));
+        menuDemand[m.id] = Math.round(base * peakMult * regionMult * (0.85 + seed(s, m.id.length) * 0.3));
+      });
+
+      const hourlyForecast = {};
+      MENU_ITEMS.forEach(m => {
+        hourlyForecast[m.id] = Array.from({length:6}, (_, h) => {
+          const hh = HOUR + h + 1;
+          const hMult =
+            (hh >= 11 && hh <= 14) ? 1.4 :
+            (hh >= 17 && hh <= 20) ? 1.3 : 0.85;
+          return Math.round(menuDemand[m.id] * hMult * (0.8 + seed(s, h * 3) * 0.4));
+        });
+      });
+
+      const ingDemand = {};
+      INGREDIENTS.forEach(ing => {
+        let totalOrders = ing.menu.reduce((sum, mId) => sum + (menuDemand[mId] || 0), 0);
+        const qtyPer =
+          ing.id === "beef"    ? 0.33 :
+          ing.id === "potato"  ? 0.5  :
+          ing.id === "fry_oil" ? 0.02 :
+          ing.id === "syrup"   ? 0.15 :
+          ing.id === "cups"    ? 1    :
+          ing.id === "bun"     ? 1    : 0.12;
+
+        ingDemand[ing.id] = {
+          forecast: Math.round(totalOrders * qtyPer * (0.9 + seed(s, ing.id.length) * 0.2) * 10) / 10,
+          onHand:   Math.round((5 + seed(s, ing.id.length * 2) * 35) * 10) / 10,
+          confidence: Math.round(68 + seed(s, ing.id.length * 3) * 28),
+        };
+
+        const { forecast, onHand } = ingDemand[ing.id];
+        const ratio = onHand / (forecast + 0.1);
+        ingDemand[ing.id].wri = Math.min(100, Math.max(0,
+          Math.round((1 / ing.shelf) * 350
+            + (ratio > 2 ? 40 : ratio < 0.5 ? 10 : 25)
+            + seed(s, ing.id.length * 4) * 20)
+        ));
+      });
+
+      const avgConf = Math.round(Object.values(ingDemand).reduce((a, d) => a + d.confidence, 0) / INGREDIENTS.length);
+      const avgWri  = Math.round(Object.values(ingDemand).reduce((a, d) => a + d.wri, 0) / INGREDIENTS.length);
+
+      return { menuDemand, hourlyForecast, ingDemand, avgConf, avgWri, peakMult };
+    }
+
+    // ── UTILS ────────────────────────────────────────────────────────────────
+    const usd  = n => "$" + Math.abs(Math.round(n)).toLocaleString();
+    const fmt  = n => typeof n === "number" ? n.toLocaleString() : n;
+    const wriC = v => v >= 65 ? "#EF4444" : v >= 40 ? "#F59E0B" : "#22C55E";
+    const wriL = v => v >= 65 ? "HIGH" : v >= 40 ? "MED" : "LOW";
+    const confC= v => v >= 85 ? "#22C55E" : v >= 70 ? "#F59E0B" : "#EF4444";
+
+    function WRIBadgeHTML(v) {
+      const c = wriC(v);
+      const bg = v >= 65 ? "#FEE2E2" : v >= 40 ? "#FEF3C7" : "#DCFCE7";
+      return `
+        <span class="wri-b" style="background:${bg};color:${c}">
+          <span style="width:5px;height:5px;border-radius:50%;background:${c};flex-shrink:0;display:inline-block"></span>
+          ${v} ${wriL(v)}
+        </span>
+      `;
+    }
+
+    function WRIBarHTML(v) {
+      return `
+        <div class="wri-bar">
+          <div class="wri-bar-f" style="width:${v}%;background:${wriC(v)}"></div>
+        </div>
+      `;
+    }
+
+    function ConfBarHTML(v) {
+      return `
+        <div style="display:flex;align-items:center;gap:6px">
+          <div class="conf-bar" style="flex:1">
+            <div class="conf-bar-f" style="width:${v}%;background:${confC(v)}"></div>
           </div>
+          <span style="font-family:var(--mono);font-size:10px;color:${confC(v)};font-weight:600;width:32px">${v}%</span>
+        </div>
+      `;
+    }
 
-          <div class="hero-stats" role="list">
-            <div class="stat" role="listitem">
-              <div class="stat-k">25%</div>
-              <div class="stat-l">target waste reduction via guided prep decisions</div>
+    function SparklineHTML(data, color) {
+      const max = Math.max(...data, 1);
+      const bars = data.map((v,i) => {
+        const h = Math.round((v / max) * 100);
+        const op = (0.6 + (i / data.length) * 0.4).toFixed(2);
+        return `<div class="spark-bar" style="height:${h}%;background:${color};opacity:${op}"></div>`;
+      }).join("");
+      return `<div class="sparkline">${bars}</div>`;
+    }
+
+    function SpinnerHTML() { return `<span class="spin"></span>`; }
+
+    // ── DEMO "AI" (no API) ────────────────────────────────────────────────────
+    // GitHub Pages is static; do NOT put real API keys in the browser.
+    function demoKitchenAlerts(loc, data) {
+      return [
+        { type:"HOLD",  item:"Burger Patties",    message:"Current on-hand exceeds near-term demand. Hold production until queue drops below ~20 units.", urgency:"HIGH",   timeframe:"Now" },
+        { type:"PREP",  item:"Chicken Sandwich",  message:"Spike forecast within the hour. Pre-stage 30 chicken portions to keep service time low.", urgency:"HIGH",   timeframe:"Next 45 min" },
+        { type:"DELAY", item:"Fries — Large Batch",message:"Over-production risk. Delay next fry cycle by 20 minutes to reduce spoilage exposure.", urgency:"CRITICAL", timeframe:"Delay 20 min" },
+        { type:"PREP",  item:"Fountain Beverages", message:"Restock cups and syrup at all stations before peak traffic begins.", urgency:"NORMAL", timeframe:"Within 30 min" },
+        { type:"HOLD",  item:"Coleslaw Side",     message:"Use existing coleslaw first; avoid making a new batch until current stock is half depleted.", urgency:"HIGH",   timeframe:"Next 15 min" },
+      ];
+    }
+
+    function demoLeanInsight(loc, data) {
+      const top3 = Object.entries(data.ingDemand).sort(([,a],[,b])=>b.wri-a.wri).slice(0,3)
+        .map(([id,d]) => `${INGREDIENTS.find(i=>i.id===id)?.name} (WRI:${d.wri})`).join(", ");
+      return `Watch ${top3} closely today: reduce on-hand to within ~1.5× the next 4-hour forecast to avoid over-production waste. Adjust ordering and prep using a pull system—only replenish what demand is pulling forward. Apply the lean principle "JIT" by staging smaller batches more frequently during peaks instead of large pre-cooks.`;
+    }
+
+    function demoReorderRecs(loc, data) {
+      return INGREDIENTS.map(ing => {
+        const d = data.ingDemand[ing.id];
+        const needed = Math.max(0, d.forecast * 6 - d.onHand);
+        const leanQty = Math.max(0, Math.round(needed * 1.1));
+        return {
+          id: ing.id,
+          leanQty,
+          urgency: (d.wri >= 65 && d.onHand < d.forecast) ? "IMMEDIATE" : (d.wri >= 40 ? "TODAY" : "ROUTINE"),
+          reason: `Order only what covers ~24h demand with ≤10% buffer to prevent overstock waste.`
+        };
+      });
+    }
+
+    // ── VIEWS CONFIG ──────────────────────────────────────────────────────────
+    const VIEWS = [
+      { id:"dashboard",    label:"Dashboard",           icon:"📊" },
+      { id:"kitchen",      label:"Kitchen Alerts",      icon:"🍳" },
+      { id:"forecast",     label:"Ingredient Forecast", icon:"📈" },
+      { id:"reorder",      label:"Supplier Reorder",    icon:"📦" },
+      { id:"chain",        label:"Chain Overview",      icon:"🗺️" },
+      { id:"predictions",  label:"Predictions",         icon:"🔮" },
+    ];
+
+    const TITLES = {
+      dashboard:  { t:"Operations Dashboard",    s:"Live demand, waste risk & confidence overview" },
+      kitchen:    { t:"AI Kitchen Alerts",       s:"Real-time HOLD / PREP / DELAY directives" },
+      forecast:   { t:"Ingredient Forecast",     s:"Demand & waste risk by ingredient" },
+      reorder:    { t:"Lean Supplier Reorder",   s:"Just-in-time reorder quantities — demo mode" },
+      chain:      { t:"Chain Overview",          s:"40 Washington locations — heatmap & performance" },
+      predictions:{ t:"Predictions",             s:"Demand forecasts with context — demo mode" },
+    };
+
+    // ── APP STATE ─────────────────────────────────────────────────────────────
+    let state = {
+      view: "dashboard",
+      locId: 1,
+      search: "",
+      allData: {},           // locId -> data
+      reorderQty: {},        // ingredientId -> qty
+      reorderSubmitted: false,
+      predActive: 0,
+    };
+
+    // ── INIT DATA ─────────────────────────────────────────────────────────────
+    function regenAllData() {
+      const d = {};
+      WA_LOCATIONS.forEach(l => d[l.id] = genLocationData(l));
+      state.allData = d;
+    }
+
+    // ── RENDER HELPERS ────────────────────────────────────────────────────────
+    const $ = sel => document.querySelector(sel);
+    const el = (tag, attrs={}, children=[]) => {
+      const n = document.createElement(tag);
+      Object.entries(attrs).forEach(([k,v]) => {
+        if (k === "class") n.className = v;
+        else if (k === "html") n.innerHTML = v;
+        else if (k.startsWith("on") && typeof v === "function") n.addEventListener(k.slice(2).toLowerCase(), v);
+        else n.setAttribute(k, v);
+      });
+      children.forEach(c => n.appendChild(typeof c === "string" ? document.createTextNode(c) : c));
+      return n;
+    };
+
+    function setTopbar() {
+      const loc = WA_LOCATIONS.find(x => x.id === state.locId);
+      const t = TITLES[state.view];
+      $("#topTitle").textContent = t.t;
+      $("#topSub").textContent = t.s;
+
+      const showLoc = state.view !== "chain";
+      const chipLoc = $("#chipLoc");
+      const chipCity = $("#chipCity");
+      chipLoc.style.display = showLoc ? "inline-flex" : "none";
+      chipCity.style.display = showLoc ? "inline-flex" : "none";
+      if (showLoc) {
+        chipLoc.textContent = `#${String(loc.id).padStart(2,"0")} ${loc.name}`;
+        chipCity.textContent = `${loc.city}, WA`;
+      }
+    }
+
+    function renderNav() {
+      const nav = $("#nav");
+      nav.innerHTML = "";
+      VIEWS.forEach(v => {
+        nav.appendChild(el("div", {
+          class: `sb-nav-item ${state.view === v.id ? "active" : ""}`,
+          onclick: () => { state.view = v.id; state.reorderSubmitted = false; render(); }
+        }, [
+          el("span",{class:"sb-icon", html: v.icon}),
+          el("span",{html: v.label})
+        ]));
+      });
+    }
+
+    function renderLocationList() {
+      $("#locCount").textContent = WA_LOCATIONS.length;
+      const list = $("#locList");
+      list.innerHTML = "";
+      const q = (state.search || "").toLowerCase();
+
+      const filtered = WA_LOCATIONS.filter(l =>
+        l.name.toLowerCase().includes(q) ||
+        l.city.toLowerCase().includes(q) ||
+        l.region.toLowerCase().includes(q)
+      );
+
+      filtered.forEach(l => {
+        list.appendChild(el("div", {
+          class: `loc-item ${l.id === state.locId ? "active" : ""}`,
+          onclick: () => { state.locId = l.id; state.search = ""; $("#locSearch").value=""; state.reorderSubmitted=false; render(); }
+        }, [
+          el("span",{html: l.name}),
+          el("span",{class:"loc-id", html: `#${String(l.id).padStart(2,"0")}`})
+        ]));
+      });
+    }
+
+    function setClock() {
+      const now = new Date();
+      $("#timeStr").textContent = now.toLocaleTimeString("en-US",{hour:"2-digit",minute:"2-digit"});
+      $("#dateStr").textContent = now.toLocaleDateString("en-US",{weekday:"short",month:"short",day:"numeric"});
+    }
+
+    // ── VIEW RENDERERS ─────────────────────────────────────────────────────────
+    function renderDashboard(loc, data) {
+      const totalOrders = Object.values(data.menuDemand).reduce((s,v)=>s+v,0);
+      const highWri = Object.values(data.ingDemand).filter(d=>d.wri>=65).length;
+      const medWri  = Object.values(data.ingDemand).filter(d=>d.wri>=40 && d.wri<65).length;
+
+      const kpis = [
+        { label:"Orders This Hour", val: fmt(totalOrders), sub:`${loc.city} · ${loc.region}`, icon:"🧾", accent:"#D97706" },
+        { label:"Avg Confidence",   val:`${data.avgConf}%`, sub:"forecast accuracy", icon:"🎯", accent:confC(data.avgConf) },
+        { label:"Avg Waste Risk",   val:data.avgWri, sub:"across all ingredients", icon:"⚠️", accent:wriC(data.avgWri) },
+        { label:"High-Risk Items",  val:highWri, sub:`${medWri} medium risk`, icon:"🔴", accent:"#EF4444" },
+      ];
+
+      const kpiHTML = `
+        <div class="g4">
+          ${kpis.map(t => `
+            <div class="tile" style="--t-accent:${t.accent}">
+              <div class="tile-icon">${t.icon}</div>
+              <div class="tile-label">${t.label}</div>
+              <div class="tile-val" style="color:${t.accent}">${t.val}</div>
+              <div class="tile-sub">${t.sub}</div>
             </div>
-            <div class="stat" role="listitem">
-              <div class="stat-k">$300</div>
-              <div class="stat-l">per store / month pricing model</div>
+          `).join("")}
+        </div>
+      `;
+
+      const menuCards = `
+        <div class="section-label">Live Menu Demand — Last Hour</div>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:12px;margin-bottom:18px">
+          ${MENU_ITEMS.map(m => {
+            const cnt = data.menuDemand[m.id];
+            const hrs = data.hourlyForecast[m.id];
+            return `
+              <div class="card" style="margin-bottom:0">
+                <div class="card-body" style="padding:14px 14px 10px">
+                  <div style="font-size:28px;margin-bottom:6px">${m.emoji}</div>
+                  <div style="font-size:11px;font-weight:700;color:var(--text2);margin-bottom:4px">${m.name}</div>
+                  <div style="font-family:var(--mono);font-size:24px;font-weight:700;color:${m.color}">${cnt}</div>
+                  <div style="font-size:10px;color:var(--text3);margin-bottom:8px">orders this hour</div>
+                  ${SparklineHTML(hrs, m.color)}
+                  <div style="font-size:9px;color:var(--text3);margin-top:4px;font-family:var(--mono)">next 6h forecast</div>
+                </div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      // Top 6 WRI table
+      const top6 = Object.entries(data.ingDemand).sort(([,a],[,b])=>b.wri-a.wri).slice(0,6);
+      const wriRows = top6.map(([id,d]) => {
+        const ing = INGREDIENTS.find(i=>i.id===id);
+        return `
+          <tr>
+            <td style="font-weight:600">${ing.name}</td>
+            <td style="font-family:var(--mono);font-weight:700;color:${wriC(d.wri)}">${d.wri}</td>
+            <td style="width:100px">${WRIBarHTML(d.wri)}</td>
+            <td>${WRIBadgeHTML(d.wri)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      // Menu confidence (avg across ingredients for that menu)
+      const confBlocks = MENU_ITEMS.map(m => {
+        const ingList = INGREDIENTS.filter(i=>i.menu.includes(m.id));
+        const avgC = Math.round(ingList.reduce((s,i)=>s+(data.ingDemand[i.id]?.confidence||0),0)/(ingList.length||1));
+        return `
+          <div style="margin-bottom:14px">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+              <span style="font-size:12px;font-weight:600">${m.emoji} ${m.name}</span>
+              <span style="font-family:var(--mono);font-size:11px;color:${confC(avgC)};font-weight:700">${avgC}%</span>
             </div>
-            <div class="stat" role="listitem">
-              <div class="stat-k">~2.6×</div>
-              <div class="stat-l">minimum ROI for a typical store</div>
+            ${ConfBarHTML(avgC)}
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="view-wrap">
+          ${kpiHTML}
+          ${menuCards}
+
+          <div class="g2">
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-title">Waste Risk Index — Top 6</span>
+                ${WRIBadgeHTML(data.avgWri)}
+              </div>
+              <table class="tbl">
+                <thead><tr><th>Ingredient</th><th>WRI</th><th>Risk Bar</th><th>Status</th></tr></thead>
+                <tbody>${wriRows}</tbody>
+              </table>
+            </div>
+
+            <div class="card">
+              <div class="card-hd">
+                <span class="card-title">Confidence Scores — By Menu Item</span>
+                <span class="chip chip-blue">AI MODEL</span>
+              </div>
+              <div class="card-body">${confBlocks}</div>
             </div>
           </div>
         </div>
+      `;
+    }
 
-        <div class="hero-card">
-          <div class="card">
-            <h2 class="card-title">Core idea</h2>
-            <p class="card-body">
-              Most waste isn’t caused by bad forecasts—it’s caused by
-              <strong>real-time decision uncertainty</strong> during service.
-              KitchenGuide guides prep decisions at the moment waste is created.
-            </p>
-            <div class="pill-row">
-              <span class="pill">Prep now</span>
-              <span class="pill">Wait</span>
-              <span class="pill">Reduce batch</span>
+    function renderKitchen(loc, data) {
+      const alerts = demoKitchenAlerts(loc, data);
+      const urgencyOrder = { CRITICAL:0, HIGH:1, NORMAL:2 };
+      const alertStyle = {
+        HOLD:  { cls:"alert-hold",  icon:"⏸️", badge:"badge-hold",  color:"#C2410C" },
+        PREP:  { cls:"alert-prep",  icon:"✅", badge:"badge-prep",  color:"#15803D" },
+        DELAY: { cls:"alert-delay", icon:"⚡", badge:"badge-delay", color:"#BE123C" },
+      };
+
+      const list = [...alerts].sort((a,b)=>(urgencyOrder[a.urgency]??2)-(urgencyOrder[b.urgency]??2)).map(a => {
+        const s = alertStyle[a.type] || alertStyle.HOLD;
+        return `
+          <div class="alert-card ${s.cls}">
+            <span class="alert-icon">${s.icon}</span>
+            <div style="flex:1">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:2px">
+                <span class="alert-title" style="color:${s.color}">${a.type} — ${a.item}</span>
+                ${a.urgency==="CRITICAL" ? `<span style="font-size:9px;font-family:var(--mono);font-weight:700;background:#FEE2E2;color:#991B1B;padding:1px 5px;border-radius:3px">CRITICAL</span>` : ""}
+              </div>
+              <div class="alert-body">${a.message}</div>
+              <div class="alert-meta">⏱ ${a.timeframe}</div>
+            </div>
+            <span class="alert-badge ${s.badge}">${a.type}</span>
+          </div>
+        `;
+      }).join("");
+
+      const forecastCards = MENU_ITEMS.map(m => {
+        const now = data.menuDemand[m.id];
+        const next = data.hourlyForecast[m.id][0];
+        const delta = next - now;
+        const pct = Math.round((next / (now || 1)) * 100);
+        const chipClass = delta > 10 ? "chip chip-green" : delta < -10 ? "chip chip-red" : "chip chip-gray";
+        const barW = Math.min(pct, 100);
+        return `
+          <div class="card" style="margin-bottom:10px;padding:0">
+            <div style="padding:12px 14px;display:flex;align-items:center;gap:12px">
+              <span style="font-size:22px">${m.emoji}</span>
+              <div style="flex:1">
+                <div style="font-weight:600;font-size:12px;margin-bottom:4px">${m.name}</div>
+                <div style="display:flex;gap:16px;font-size:11px;color:var(--text3)">
+                  <span>Now: <strong style="font-family:var(--mono);color:var(--text)">${now}</strong></span>
+                  <span>Next hr: <strong style="font-family:var(--mono);color:${delta>10?"#16A34A":delta<-10?"#EF4444":"var(--text)"}">${next}</strong></span>
+                </div>
+              </div>
+              <div>
+                <span class="${chipClass}">${delta>0?"↑":delta<0?"↓":"→"} ${Math.abs(delta)}</span>
+              </div>
+            </div>
+            <div style="height:4px;background:var(--bg3)">
+              <div style="height:100%;width:${barW}%;background:${m.color};transition:width .5s"></div>
+            </div>
+          </div>
+        `;
+      }).join("");
+
+      return `
+        <div class="view-wrap">
+          <div class="ai-box">
+            <div class="ai-box-title">✦ AI Kitchen Intelligence — ${loc.name}</div>
+            <div class="ai-box-body">
+              Demo mode (static GitHub site): alerts are generated locally from demand + waste risk patterns.
+              For real AI, connect a secure backend (never put API keys in browser code).
             </div>
           </div>
 
-          <div class="card subtle">
-            <h3 class="card-title">Positioning</h3>
-            <p class="card-body">
-              <strong>Not an analytics tool.</strong> A decision automation layer for
-              consistent execution across locations.
-            </p>
+          <div class="g2" style="align-items:start">
+            <div>
+              <div class="section-label">Active Kitchen Alerts</div>
+              ${list}
+              <button class="btn btn-ghost btn-sm" id="regenAlerts" style="margin-top:8px">↺ Regenerate Alerts</button>
+              <div class="muted" style="font-size:10px;margin-top:8px">Tip: click “Regenerate” to re-run local logic.</div>
+            </div>
+
+            <div>
+              <div class="section-label">Forecast vs. Current Production</div>
+              ${forecastCards}
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      `;
+    }
 
-    <!-- PROBLEM -->
-    <section id="problem" class="section">
-      <div class="container">
-        <h2>Problem</h2>
-        <div class="two-col">
-          <div class="panel">
-            <h3>Waste is a live-ops decision problem</h3>
-            <ul>
-              <li>Regional fast-casual chains can lose <strong>$1.5M+</strong> annually from perishable waste (typical ~40 locations).</li>
-              <li>To avoid stockouts and wait times, kitchens over-prep—even when purchasing forecasts are accurate.</li>
-              <li>POS, inventory, and forecasting show insights, but don’t influence the real-time prep behavior where waste is created.</li>
-            </ul>
-            <p class="callout">
-              The gap: <strong>decision optimization + behavioral compliance</strong> in the kitchen.
-            </p>
+    function renderForecast(loc, data) {
+      const insight = demoLeanInsight(loc, data);
+
+      const rows = [...INGREDIENTS].sort((a,b)=>(data.ingDemand[b.id]?.wri||0)-(data.ingDemand[a.id]?.wri||0)).map(ing => {
+        const d = data.ingDemand[ing.id];
+        const surplus = d.onHand - d.forecast;
+        const status = surplus > 0 ? `<span class="tag tag-a">+${Math.round(surplus)} surplus</span>` :
+                      surplus < -2 ? `<span class="tag tag-r">shortfall</span>` :
+                                     `<span class="tag tag-g">optimal</span>`;
+        const shelfColor = ing.shelf<=3 ? "var(--red)" : ing.shelf<=7 ? "var(--amber)" : "var(--text3)";
+        return `
+          <tr>
+            <td style="font-weight:600">${ing.name}</td>
+            <td style="color:var(--text3)">${ing.unit}</td>
+            <td style="font-family:var(--mono);color:${shelfColor}">${ing.shelf}d</td>
+            <td style="font-family:var(--mono)">${d.onHand}</td>
+            <td style="font-family:var(--mono);color:#2563EB;font-weight:600">${d.forecast}</td>
+            <td style="width:140px">${ConfBarHTML(d.confidence)}</td>
+            <td>${WRIBadgeHTML(d.wri)}</td>
+            <td>${status}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const tiles = `
+        <div class="g4" style="margin-bottom:16px">
+          ${[
+            { label:"Avg Confidence Score", val:`${data.avgConf}%`, accent:confC(data.avgConf) },
+            { label:"Avg Waste Risk Index", val:data.avgWri, accent:wriC(data.avgWri) },
+            { label:"High WRI Items", val:Object.values(data.ingDemand).filter(d=>d.wri>=65).length, accent:"#EF4444" },
+            { label:"Forecast Accuracy", val:(data.avgConf>80?"High":data.avgConf>68?"Moderate":"Low"), accent:confC(data.avgConf) },
+          ].map(t=>`
+            <div class="tile" style="--t-accent:${t.accent}">
+              <div class="tile-label">${t.label}</div>
+              <div class="tile-val" style="color:${t.accent};font-size:${(String(t.val).length>7)?18:28}px">${t.val}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      return `
+        <div class="view-wrap">
+          <div class="ai-box">
+            <div class="ai-box-title">✦ AI Lean Inventory Insight — ${loc.name}</div>
+            <div class="ai-box-body">${insight}</div>
           </div>
 
-          <div class="panel">
-            <h3>Solutions explored</h3>
-            <div class="table">
-              <div class="row head">
-                <div>Approach</div><div>Helps</div><div>Falls short</div>
+          ${tiles}
+
+          <div class="card">
+            <div class="card-hd"><span class="card-title">Ingredient-Level Forecast</span></div>
+            <div style="overflow-x:auto">
+              <table class="tbl">
+                <thead><tr>
+                  <th>Ingredient</th><th>Unit</th><th>Shelf Life</th>
+                  <th>On Hand</th><th>Forecast (4h)</th><th>Confidence</th><th>WRI</th><th>Status</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderReorder(loc, data) {
+      if (state.reorderSubmitted) {
+        const totalCost = calcReorderTotal();
+        return `
+          <div class="view-wrap" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:420px;gap:16px">
+            <div style="font-size:56px">📦</div>
+            <div style="font-size:22px;font-weight:700;color:#16A34A">Lean Order Submitted</div>
+            <div style="font-size:14px;color:var(--text2)">Reorder sent to supplier for ${loc.name}</div>
+            <div style="font-family:var(--mono);font-size:13px;color:var(--text3)">Total: ${usd(totalCost)} · JIT delivery scheduled</div>
+            <button class="btn btn-ghost" id="resetReorder">Reset</button>
+          </div>
+        `;
+      }
+
+      const recs = demoReorderRecs(loc, data);
+      // init qty if empty
+      recs.forEach(r => {
+        if (state.reorderQty[r.id] === undefined) state.reorderQty[r.id] = r.leanQty;
+      });
+
+      const urgOrder = { IMMEDIATE:0, TODAY:1, ROUTINE:2 };
+      const sorted = [...recs].sort((a,b)=>(urgOrder[a.urgency]??2)-(urgOrder[b.urgency]??2));
+
+      const totalCost = calcReorderTotal();
+      const immediateCount = sorted.filter(r=>r.urgency==="IMMEDIATE").length;
+
+      const wasteAvoided = INGREDIENTS.reduce((s, ing) => {
+        const d = data.ingDemand[ing.id];
+        return s + Math.max(0, d.onHand * 0.15) * ing.cost;
+      }, 0);
+
+      const tiles = `
+        <div class="g3" style="margin-bottom:14px">
+          <div class="tile" style="--t-accent:#D97706">
+            <div class="tile-label">Lean Order Total</div>
+            <div class="tile-val" style="color:#D97706;font-size:22px">${usd(totalCost)}</div>
+            <div class="tile-sub">just-in-time quantity</div>
+          </div>
+          <div class="tile" style="--t-accent:#EF4444">
+            <div class="tile-label">Immediate Orders</div>
+            <div class="tile-val" style="color:#EF4444">${immediateCount}</div>
+            <div class="tile-sub">require today's delivery</div>
+          </div>
+          <div class="tile" style="--t-accent:#16A34A">
+            <div class="tile-label">Waste Avoided</div>
+            <div class="tile-val" style="color:#16A34A;font-size:20px">${usd(wasteAvoided)}</div>
+            <div class="tile-sub">vs. traditional over-order</div>
+          </div>
+        </div>
+      `;
+
+      const rows = sorted.map(r => {
+        const ing = INGREDIENTS.find(i=>i.id===r.id);
+        const d = data.ingDemand[r.id];
+        const qty = Number(state.reorderQty[r.id] ?? r.leanQty) || 0;
+        const line = qty * ing.cost;
+        const urgStyle = r.urgency==="IMMEDIATE" ? {bg:"#FEE2E2", c:"#991B1B"} :
+                        r.urgency==="TODAY"      ? {bg:"#FEF3C7", c:"#92400E"} :
+                                                   {bg:"#DCFCE7", c:"#14532D"};
+        return `
+          <tr>
+            <td style="font-weight:600">${ing.name}</td>
+            <td style="font-family:var(--mono);color:var(--text3)">$${ing.cost}/${ing.unit}</td>
+            <td style="font-family:var(--mono)">${d.onHand}</td>
+            <td style="font-family:var(--mono);color:#2563EB">${d.forecast}</td>
+            <td style="font-family:var(--mono);font-weight:700;color:#16A34A">${r.leanQty}</td>
+            <td>
+              <input class="qty-in" type="number" min="0" data-ing="${r.id}" value="${qty}">
+            </td>
+            <td style="font-family:var(--mono);font-weight:600">${usd(line)}</td>
+            <td>
+              <span style="font-family:var(--mono);font-size:9px;font-weight:700;padding:2px 7px;border-radius:3px;background:${urgStyle.bg};color:${urgStyle.c}">
+                ${r.urgency}
+              </span>
+            </td>
+            <td style="font-size:10px;color:var(--text3);max-width:220px">${r.reason}</td>
+          </tr>
+        `;
+      }).join("");
+
+      return `
+        <div class="view-wrap">
+          <div class="ai-box">
+            <div class="ai-box-title">✦ Lean Reorder Engine — ${loc.name}</div>
+            <div class="ai-box-body">
+              Demo mode: quantities are computed locally using demand + a small lean buffer.
+              (For real suppliers + AI, connect a backend and keep keys off GitHub Pages.)
+            </div>
+          </div>
+
+          ${tiles}
+
+          <div class="card">
+            <div class="card-hd">
+              <span class="card-title">Supplier Reorder — ${loc.name}</span>
+              <div style="display:flex;gap:8px">
+                <button class="btn btn-ghost btn-sm" id="recalcReorder">↺ Recalculate</button>
+                <button class="btn btn-green btn-sm" id="submitReorder">📦 Submit Lean Order</button>
               </div>
-              <div class="row">
-                <div>Forecasting tools</div><div>Predict daily demand</div><div>Does not guide live prep decisions</div>
-              </div>
-              <div class="row">
-                <div>Waste tracking</div><div>Show what was wasted</div><div>Too late—waste already occurred</div>
-              </div>
-              <div class="row">
-                <div>Auto-ordering / inventory</div><div>Purchasing accuracy</div><div>Does not control cooking behavior</div>
-              </div>
-              <div class="row">
-                <div>Incentives/training</div><div>Awareness</div><div>Inconsistent, short-term impact</div>
-              </div>
-              <div class="row highlight">
-                <div>Real-time guidance</div><div>Guides prep during service</div><div>Prevents waste at creation</div>
+            </div>
+
+            <div style="overflow-x:auto">
+              <table class="tbl">
+                <thead><tr>
+                  <th>Ingredient</th><th>Unit Cost</th><th>On Hand</th><th>4h Forecast</th>
+                  <th>Lean Qty</th><th>Your Qty</th><th>Line Cost</th><th>Urgency</th><th>Rationale</th>
+                </tr></thead>
+                <tbody>${rows}</tbody>
+              </table>
+            </div>
+
+            <div style="padding:12px 16px;border-top:1px solid var(--border);display:flex;justify-content:space-between;align-items:center;background:var(--bg)">
+              <div class="muted" style="font-size:11px">Lean Principle: order only what demand pulls (min buffer)</div>
+              <div style="font-family:var(--mono);font-size:13px;font-weight:700">
+                Total: <span style="color:#D97706">${usd(totalCost)}</span>
               </div>
             </div>
           </div>
         </div>
-      </div>
-    </section>
+      `;
+    }
 
-    <!-- AUDIENCE + MARKET -->
-    <section class="section alt">
-      <div class="container">
-        <h2>Who it’s for</h2>
-        <div class="three-col">
-          <div class="card">
-            <h3>Customer (Buyer)</h3>
-            <p><strong>Regional fast-casual chains</strong> operating ~20–80 locations (U.S.).</p>
-            <p>Focus: margin improvement + operational consistency.</p>
+    function calcReorderTotal() {
+      // total cost uses current selected location's data
+      const loc = WA_LOCATIONS.find(x=>x.id===state.locId);
+      const data = state.allData[loc.id];
+      const recs = demoReorderRecs(loc, data);
+      return recs.reduce((s,r) => {
+        const ing = INGREDIENTS.find(i=>i.id===r.id);
+        const qty = Number(state.reorderQty[r.id] ?? r.leanQty) || 0;
+        return s + qty * (ing?.cost || 0);
+      }, 0);
+    }
+
+    function renderChain() {
+      const allData = state.allData;
+      const metric = state.chainMetric || "wri";
+
+      const totalOrders = Object.values(allData).reduce((s,d) => s + Object.values(d.menuDemand).reduce((a,v)=>a+v,0), 0);
+      const chainAvgWri  = Math.round(Object.values(allData).reduce((s,d)=>s+d.avgWri,0)/WA_LOCATIONS.length);
+      const chainAvgConf = Math.round(Object.values(allData).reduce((s,d)=>s+d.avgConf,0)/WA_LOCATIONS.length);
+      const flagged      = WA_LOCATIONS.filter(l => allData[l.id]?.avgWri >= 60).length;
+
+      const getCellColor = (loc) => {
+        const d = allData[loc.id];
+        if (!d) return "#E5E7EB";
+        if (metric === "wri") return d.avgWri >= 60 ? "#FCA5A5" : d.avgWri >= 40 ? "#FDE68A" : "#86EFAC";
+        return d.avgConf >= 82 ? "#86EFAC" : d.avgConf >= 70 ? "#FDE68A" : "#FCA5A5";
+      };
+      const getVal = (loc) => {
+        const d = allData[loc.id];
+        return metric === "wri" ? d.avgWri : d.avgConf;
+      };
+
+      const tiles = `
+        <div class="g4" style="margin-bottom:16px">
+          ${[
+            { label:"Total Chain Orders/Hr", val:fmt(totalOrders), accent:"#D97706", icon:"🧾" },
+            { label:"Chain Avg WRI",         val:chainAvgWri,      accent:wriC(chainAvgWri), icon:"⚠️" },
+            { label:"Chain Avg Confidence",  val:`${chainAvgConf}%`,accent:confC(chainAvgConf), icon:"🎯" },
+            { label:"High-Risk Locations",   val:flagged,          accent:"#EF4444", icon:"🔴" },
+          ].map(t=>`
+            <div class="tile" style="--t-accent:${t.accent}">
+              <div class="tile-icon">${t.icon}</div>
+              <div class="tile-label">${t.label}</div>
+              <div class="tile-val" style="color:${t.accent};font-size:${String(t.val).length>6?18:28}px">${t.val}</div>
+            </div>
+          `).join("")}
+        </div>
+      `;
+
+      const heat = `
+        <div class="card">
+          <div class="card-hd">
+            <span class="card-title">Chain Heatmap — 40 Washington Locations</span>
+            <div style="display:flex;gap:6px">
+              <button class="btn btn-sm ${metric==="wri"?"btn-amber":"btn-ghost"}" id="metricWri">WRI Score</button>
+              <button class="btn btn-sm ${metric==="conf"?"btn-amber":"btn-ghost"}" id="metricConf">Confidence</button>
+            </div>
           </div>
-          <div class="card">
-            <h3>Operational Owner</h3>
-            <p><strong>Regional Operations Manager</strong> overseeing ~40 stores.</p>
-            <p>Goal: standardize performance without micromanaging.</p>
-          </div>
-          <div class="card">
-            <h3>Daily Users</h3>
-            <p><strong>Store managers & kitchen staff</strong> making real-time prep decisions during service.</p>
-            <p>Need: simple, clear guidance under pressure.</p>
+          <div class="card-body">
+            <div class="heatmap-grid">
+              ${WA_LOCATIONS.map(loc => {
+                const v = getVal(loc);
+                const c = getCellColor(loc);
+                const isActive = loc.id === state.locId;
+                return `
+                  <div class="heat-cell" data-loc="${loc.id}"
+                    title="${loc.name}: ${metric.toUpperCase()} ${v}"
+                    style="background:${c};border:${isActive?"2px solid #D97706":"1px solid rgba(0,0,0,.08)"};color:#374151;box-shadow:${isActive?"0 0 0 2px #D97706":"none"}">
+                    ${v}
+                  </div>
+                `;
+              }).join("")}
+            </div>
+            <div style="margin-top:12px;display:flex;gap:16px;font-size:10px;color:var(--text3);flex-wrap:wrap">
+              <span>🟢 ${metric==="wri"?"Low risk (<40)":"High conf (>82%)"}</span>
+              <span>🟡 ${metric==="wri"?"Med risk (40-64)":"Med conf (70-82%)"}</span>
+              <span>🔴 ${metric==="wri"?"High risk (≥65)":"Low conf (<70%)"}</span>
+              <span style="margin-left:auto">Click any cell to switch location</span>
+            </div>
           </div>
         </div>
+      `;
 
-        <h2 class="mt">Market opportunity (U.S.)</h2>
-        <div class="two-col">
-          <div class="panel">
-            <ul>
-              <li>~150,000 fast-casual restaurant locations in the U.S.</li>
-              <li>~20% belong to regional chains → ~30,000 stores.</li>
-              <li>Initial target segment: ~20,000 tech-adopting operators.</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h3>Go-to-market wedge</h3>
-            <p>
-              Start with regional operators for faster adoption and measurable ROI,
-              then expand once savings are proven.
-            </p>
+      const rows = WA_LOCATIONS.map(loc => {
+        const d = allData[loc.id];
+        const orders = Object.values(d.menuDemand).reduce((s,v)=>s+v,0);
+        const status = d.avgWri >= 65 ? "FLAGGED" : d.avgWri >= 40 ? "WATCH" : "GOOD";
+        const sc = status==="FLAGGED"?"tag-r":status==="WATCH"?"tag-a":"tag-g";
+        const isActive = loc.id === state.locId;
+        return `
+          <tr data-loc="${loc.id}" style="cursor:pointer">
+            <td style="font-family:var(--mono);color:var(--text3);font-size:10px">${String(loc.id).padStart(2,"0")}</td>
+            <td style="font-weight:600;color:${isActive?"var(--amber)":"var(--text)"}">${isActive?"→ ":""}${loc.name}</td>
+            <td style="color:var(--text2)">${loc.city}</td>
+            <td style="font-size:10px;color:var(--text3)">${loc.region}</td>
+            <td style="font-family:var(--mono);font-weight:600">${fmt(orders)}</td>
+            <td>${WRIBadgeHTML(d.avgWri)}</td>
+            <td style="width:130px">${ConfBarHTML(d.avgConf)}</td>
+            <td><span class="tag ${sc}">${status}</span></td>
+          </tr>
+        `;
+      }).join("");
+
+      const table = `
+        <div class="card">
+          <div class="card-hd"><span class="card-title">All Locations — Performance Summary</span></div>
+          <div style="overflow-x:auto;max-height:380px">
+            <table class="tbl">
+              <thead><tr>
+                <th>#</th><th>Location</th><th>City</th><th>Region</th>
+                <th>Orders/hr</th><th>Avg WRI</th><th>Avg Confidence</th><th>Status</th>
+              </tr></thead>
+              <tbody>${rows}</tbody>
+            </table>
           </div>
         </div>
-      </div>
-    </section>
+      `;
 
-    <!-- SWOT -->
-    <section class="section">
-      <div class="container">
-        <h2>SWOT snapshot</h2>
-        <div class="swot">
-          <div class="swot-box">
-            <h3>Strengths</h3>
-            <ul>
-              <li>Real-time operational guidance (unique in market)</li>
-              <li>Minimal manual input; frontline-ready interface</li>
-              <li>Quantifiable ROI (waste reduction + margin improvement)</li>
-            </ul>
+      return `<div class="view-wrap">${tiles}${heat}${table}</div>`;
+    }
+
+    function renderPredictions(loc, data) {
+      // static demo set like your React version
+      const predictions = [
+        {
+          day: "Next Tuesday", date: "Feb 25", meals: 83, weather: "🌧️ Rain expected", event: "No event nearby",
+          adjustments: [
+            { ingredient: "Tomatoes", change: -12, reason: "Rain reduces foot traffic for fresh items" },
+            { ingredient: "Hot Beverages", change: +18, reason: "Cold/wet weather drives warm drink demand" },
+            { ingredient: "Soup & Sides", change: +9,  reason: "Comfort food preference on rainy days" },
+          ],
+          confidence: 81,
+          note: "Next Tuesday: 83 meals. Rain expected. No event nearby. Order 12% less tomatoes."
+        },
+        {
+          day: "Next Wednesday", date: "Feb 26", meals: 107, weather: "☀️ Clear skies", event: "🎶 Local concert nearby",
+          adjustments: [
+            { ingredient: "Burger Buns", change: +22, reason: "Concert crowd boosts evening orders" },
+            { ingredient: "Ground Beef", change: +19, reason: "High burger demand during event window" },
+            { ingredient: "Fountain Syrup", change: +15, reason: "Beverage spike with large crowd" },
+          ],
+          confidence: 87,
+          note: "Wednesday concert nearby drives +22% dinner rush. Pre-stage extra buns and beef by 4 PM."
+        },
+        {
+          day: "Next Thursday", date: "Feb 27", meals: 71, weather: "🌥️ Overcast", event: "No event nearby",
+          adjustments: [
+            { ingredient: "Romaine Lettuce", change: -8, reason: "Mid-week slow period, reduce perishables" },
+            { ingredient: "Coleslaw Mix", change: -11, reason: "Short shelf life — order conservatively" },
+            { ingredient: "Chicken Breast", change: +5, reason: "Slight uptick in lunch sandwich demand" },
+          ],
+          confidence: 74,
+          note: "Quiet Thursday forecasted. Trim perishable orders to reduce mid-week waste exposure."
+        },
+        {
+          day: "Next Friday", date: "Feb 28", meals: 134, weather: "🌤️ Partly cloudy", event: "🏫 School half-day nearby",
+          adjustments: [
+            { ingredient: "Fries (Potatoes)", change: +28, reason: "School half-day generates early lunch surge" },
+            { ingredient: "Kids Beverages", change: +24, reason: "Family dining peaks on school release days" },
+            { ingredient: "Cheese", change: +16, reason: "Higher burger & side orders during family visits" },
+          ],
+          confidence: 90,
+          note: "School half-day Friday: expect 2 PM–4 PM surge. Prep fry oil and stage extra potato stock."
+        },
+      ];
+
+      const active = predictions[state.predActive] || predictions[0];
+
+      const selector = `
+        <div style="display:flex;gap:10px;margin-bottom:18px;flex-wrap:wrap">
+          ${predictions.map((p,i) => {
+            const is = i===state.predActive;
+            return `
+              <div class="predPick" data-i="${i}"
+                style="flex:1;min-width:140px;padding:12px 14px;border-radius:var(--r);cursor:pointer;
+                  background:${is?"var(--amber)":"var(--panel)"};
+                  border:1px solid ${is?"var(--amber)":"var(--border)"};
+                  transition:all .15s;box-shadow:${is?"0 2px 10px rgba(217,119,6,.25)":"none"}">
+                <div style="font-size:10px;font-weight:700;color:${is?"rgba(255,255,255,.7)":"var(--text3)"};
+                  text-transform:uppercase;letter-spacing:1px;margin-bottom:4px">${p.day}</div>
+                <div style="font-family:var(--mono);font-size:22px;font-weight:700;color:${is?"#fff":"var(--text)"}">${p.meals}</div>
+                <div style="font-size:10px;color:${is?"rgba(255,255,255,.8)":"var(--text3)"};margin-top:2px">meals forecast</div>
+                <div style="font-size:11px;margin-top:6px">${p.weather}</div>
+              </div>
+            `;
+          }).join("")}
+        </div>
+      `;
+
+      const confColor = confC(active.confidence);
+      const confBg = confColor==="#22C55E" ? "rgba(34,197,94,.15)"
+                  : confColor==="#F59E0B" ? "rgba(245,158,11,.15)"
+                  : "rgba(239,68,68,.15)";
+
+      const main = `
+        <div class="g21" style="align-items:start">
+          <div>
+            <div style="background:linear-gradient(135deg,#1C2333,#242D42);border-radius:var(--r);
+              padding:20px 22px;margin-bottom:14px;border:1px solid rgba(255,255,255,.08)">
+              <div style="font-family:var(--mono);font-size:10px;color:#FBB040;font-weight:700;
+                letter-spacing:1.5px;text-transform:uppercase;margin-bottom:10px">
+                🔮 AI PREDICTION — ${active.day.toUpperCase()}, ${active.date}
+              </div>
+              <div style="font-size:17px;font-weight:600;color:#F1F5F9;line-height:1.6;margin-bottom:14px;
+                font-family:var(--serif);font-style:italic">
+                “${active.note}”
+              </div>
+              <div style="display:flex;gap:10px;flex-wrap:wrap">
+                <span style="background:rgba(251,176,64,.15);border:1px solid rgba(251,176,64,.3);
+                  color:#FBB040;font-size:11px;font-weight:600;padding:4px 10px;border-radius:4px;
+                  font-family:var(--mono)">📦 ${active.meals} meals</span>
+                <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+                  color:#94A3B8;font-size:11px;padding:4px 10px;border-radius:4px">${active.weather}</span>
+                <span style="background:rgba(255,255,255,.07);border:1px solid rgba(255,255,255,.1);
+                  color:#94A3B8;font-size:11px;padding:4px 10px;border-radius:4px">${active.event}</span>
+                <span style="margin-left:auto;background:${confBg};border:1px solid ${confColor}40;color:${confColor};
+                  font-size:11px;font-weight:700;padding:4px 10px;border-radius:4px;font-family:var(--mono)">
+                  ${active.confidence}% conf.
+                </span>
+              </div>
+            </div>
+
+            <div class="card" style="margin-bottom:0">
+              <div class="card-hd">
+                <span class="card-title">Recommended Ingredient Adjustments</span>
+                <span class="chip chip-amber">DEMO</span>
+              </div>
+              ${active.adjustments.map((adj,i) => `
+                <div style="padding:14px 16px;border-bottom:${i<active.adjustments.length-1?"1px solid var(--border)":"none"};
+                  display:flex;align-items:center;gap:14px;animation:slideUp2 .25s ease">
+                  <div style="width:52px;height:52px;border-radius:var(--r);flex-shrink:0;
+                    background:${adj.change>0?"var(--green2)":"var(--red2)"};
+                    display:flex;flex-direction:column;align-items:center;justify-content:center">
+                    <div style="font-size:11px;font-weight:800;font-family:var(--mono);color:${adj.change>0?"#16A34A":"#DC2626"}">
+                      ${adj.change>0?"+":""}${adj.change}%
+                    </div>
+                    <div style="font-size:14px">${adj.change>0?"↑":"↓"}</div>
+                  </div>
+                  <div style="flex:1">
+                    <div style="font-weight:700;font-size:13px;margin-bottom:3px">${adj.ingredient}</div>
+                    <div style="font-size:11px;color:var(--text2);line-height:1.5">${adj.reason}</div>
+                  </div>
+                  <span class="${adj.change>0?"chip chip-green":"chip chip-red"}">${adj.change>0?"ORDER MORE":"ORDER LESS"}</span>
+                </div>
+              `).join("")}
+            </div>
           </div>
-          <div class="swot-box">
-            <h3>Opportunities</h3>
-            <ul>
-              <li>Rising AI adoption in restaurant tech</li>
-              <li>Partnerships: POS, procurement, supply chains</li>
-              <li>Sustainability mandates pushing waste reduction</li>
-            </ul>
-          </div>
-          <div class="swot-box">
-            <h3>Weaknesses</h3>
-            <ul>
-              <li>Early-stage adoption risk for conservative operators</li>
-              <li>Need sales effort to educate buyers</li>
-              <li>Limited brand awareness vs incumbents</li>
-            </ul>
-          </div>
-          <div class="swot-box">
-            <h3>Threats</h3>
-            <ul>
-              <li>Competitors adding real-time decision support</li>
-              <li>Incumbents expanding footprints</li>
-              <li>Integration challenges with legacy POS/ERP</li>
-            </ul>
+
+          <div>
+            <div class="card" style="margin-bottom:14px">
+              <div class="card-hd"><span class="card-title">Forecast Context</span></div>
+              <div class="card-body" style="padding:14px 16px">
+                ${[
+                  { icon:"🌦️", label:"Weather Signal", val:active.weather },
+                  { icon:"📍", label:"Event Signal", val:active.event },
+                  { icon:"📊", label:"Meal Volume", val:`${active.meals} meals` },
+                  { icon:"🎯", label:"AI Confidence", val:`${active.confidence}%` },
+                ].map((row,i) => `
+                  <div style="display:flex;align-items:center;justify-content:space-between;padding:8px 0;
+                    border-bottom:${i<3?"1px solid var(--border)":"none"}">
+                    <span style="font-size:12px;color:var(--text3)">${row.icon} ${row.label}</span>
+                    <span style="font-size:12px;font-weight:600;font-family:var(--mono)">${row.val}</span>
+                  </div>
+                `).join("")}
+              </div>
+            </div>
+
+            <div class="card">
+              <div class="card-hd"><span class="card-title">7-Day Volume Forecast</span></div>
+              <div class="card-body">
+                ${[
+                  { d:"Mon",  v:91,  w:"🌤️" },
+                  { d:"Tue",  v:83,  w:"🌧️", highlight:true },
+                  { d:"Wed",  v:107, w:"☀️" },
+                  { d:"Thu",  v:71,  w:"🌥️" },
+                  { d:"Fri",  v:134, w:"🌤️" },
+                  { d:"Sat",  v:158, w:"☀️" },
+                  { d:"Sun",  v:143, w:"⛅" },
+                ].map(row => {
+                  const pct = Math.round((row.v/160)*100);
+                  return `
+                    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
+                      <span style="font-size:11px;font-family:var(--mono);width:26px;color:${row.highlight?"var(--amber)":"var(--text3)"};font-weight:${row.highlight?700:400}">${row.d}</span>
+                      <span style="font-size:11px">${row.w}</span>
+                      <div style="flex:1;height:8px;background:var(--bg3);border-radius:4px;overflow:hidden">
+                        <div style="height:100%;width:${pct}%;background:${row.highlight?"var(--amber)":"#94A3B8"};border-radius:4px;transition:width .5s"></div>
+                      </div>
+                      <span style="font-family:var(--mono);font-size:11px;font-weight:600;width:28px;color:${row.highlight?"var(--amber)":"var(--text)"}">${row.v}</span>
+                    </div>
+                  `;
+                }).join("")}
+              </div>
+            </div>
           </div>
         </div>
-      </div>
-    </section>
+      `;
 
-    <!-- SOLUTION -->
-    <section id="solution" class="section alt">
-      <div class="container">
-        <h2>Solution</h2>
-        <div class="two-col">
-          <div class="panel">
-            <h3>KitchenGuide: Real-Time Kitchen Decision Assistant</h3>
-            <p>
-              KitchenGuide reduces food waste across all locations by giving each kitchen
-              real-time preparation guidance—so every store prepares exactly what it will sell.
-            </p>
-            <p class="callout">The right food, at the right time, in the right amount.</p>
-
-            <h3 class="mt">Stakeholder value</h3>
-            <ul>
-              <li><strong>Regional operator:</strong> margin improvement & consistency</li>
-              <li><strong>Store manager:</strong> confidence during rush</li>
-              <li><strong>Staff:</strong> less guesswork</li>
-            </ul>
+      return `
+        <div class="view-wrap">
+          <div class="ai-box">
+            <div class="ai-box-title">✦ AI Demand Predictions — ${loc.name}</div>
+            <div class="ai-box-body">
+              Demo mode: prediction cards are static. The UI layout matches your React concept but runs as one HTML file.
+            </div>
           </div>
-
-          <div class="panel">
-            <h3>Product components</h3>
-            <ol class="steps">
-              <li>
-                <strong>Regional Manager Dashboard (Control Layer)</strong><br />
-                Compare waste across stores, identify non-adherence, track margin and consistency.
-              </li>
-              <li>
-                <strong>Prediction & Decision Engine (Intelligence Layer)</strong><br />
-                Forecast demand per ingredient, optimize orders/reorder points, generate live recommendations.
-              </li>
-              <li>
-                <strong>Kitchen Display Tablet (Execution Layer)</strong><br />
-                Simple “Prep / Wait / Reduce” instructions during service.
-              </li>
-            </ol>
-            <p class="mini">Manager controls → Kitchen acts → System learns</p>
-          </div>
+          ${selector}
+          ${main}
         </div>
-      </div>
-    </section>
+      `;
+    }
 
-    <!-- HOW IT WORKS -->
-    <section id="how" class="section">
-      <div class="container">
-        <h2>How it works</h2>
-        <div class="timeline">
-          <div class="t-item">
-            <h3>1) Predict & plan (before opening)</h3>
-            <ul>
-              <li>Predicts demand per ingredient</li>
-              <li>Calculates optimal order quantities</li>
-              <li>Adjusts reorder points dynamically</li>
-              <li>Flags overstock risk before spoilage</li>
-            </ul>
-          </div>
-          <div class="t-item">
-            <h3>2) Guide live prep (during service)</h3>
-            <ul>
-              <li>Compares actual sales vs expected demand continuously</li>
-              <li>Prompts staff to prep now / wait / reduce batch</li>
-              <li>Prevents “just-in-case” cooking</li>
-            </ul>
-          </div>
-          <div class="t-item">
-            <h3>3) Learn & improve (after closing)</h3>
-            <ul>
-              <li>Shows waste cost by ingredient</li>
-              <li>Identifies over-prep periods</li>
-              <li>Refines next day’s plan</li>
-            </ul>
-          </div>
-        </div>
-        <p class="callout mt">
-          Result: Accurate purchasing + real-time cooking decisions across all stores.
-        </p>
-      </div>
-    </section>
+    // ── MAIN RENDER ───────────────────────────────────────────────────────────
+    function render() {
+      setTopbar();
+      renderNav();
+      renderLocationList();
 
-    <!-- METRICS -->
-    <section id="metrics" class="section alt">
-      <div class="container">
-        <h2>Success metrics</h2>
-        <div class="two-col">
-          <div class="panel">
-            <h3>Leading indicators (behavior change)</h3>
-            <ul>
-              <li><strong>Prep-guidance adherence rate:</strong> % followed vs overridden per shift</li>
-              <li><strong>Manual override rate:</strong> overrides ÷ total recommendations</li>
-              <li><strong>Emergency prep events:</strong> unplanned batches cooked during rush</li>
-            </ul>
-          </div>
-          <div class="panel">
-            <h3>Lagging indicators (business impact)</h3>
-            <ul>
-              <li><strong>Perishable waste cost/store:</strong> discarded ingredients vs baseline</li>
-              <li><strong>Stockout incidents:</strong> count of items unavailable during service</li>
-            </ul>
-            <p class="mini">Goal: reduce waste without harming service.</p>
-          </div>
-        </div>
-      </div>
-    </section>
+      const loc = WA_LOCATIONS.find(x=>x.id===state.locId);
+      const data = state.allData[loc.id];
 
-    <!-- LAUNCH -->
-    <section id="launch" class="section">
-      <div class="container">
-        <h2>Launch strategy</h2>
-        <div class="two-col">
-          <div class="panel">
-            <h3>Teams involved</h3>
-            <ul>
-              <li><strong>Customer Service:</strong> 15-minute onboarding + early support</li>
-              <li><strong>Operations:</strong> workflow fit + adoption reinforcement</li>
-              <li><strong>Sales:</strong> recruit operators + set pilot expectations</li>
-              <li><strong>Compliance & Security:</strong> data-sharing approval + role-based access</li>
-              <li><strong>Issue-resolution:</strong> fix incorrect alerts + keep override for trust</li>
-              <li><strong>PR/Ads:</strong> publish pilot results and case studies</li>
-              <li><strong>Education:</strong> training materials for Prep/Wait/Reduce</li>
-            </ul>
-          </div>
+      const content = $("#content");
+      if (state.view === "dashboard")   content.innerHTML = renderDashboard(loc, data);
+      if (state.view === "kitchen")     content.innerHTML = renderKitchen(loc, data);
+      if (state.view === "forecast")    content.innerHTML = renderForecast(loc, data);
+      if (state.view === "reorder")     content.innerHTML = renderReorder(loc, data);
+      if (state.view === "chain")       content.innerHTML = renderChain();
+      if (state.view === "predictions") content.innerHTML = renderPredictions(loc, data);
 
-          <div class="panel">
-            <h3>Day-1 playbook</h3>
-            <p class="callout">Introduce a safe assistive tool—not a mandate.</p>
-            <ul>
-              <li><strong>Before opening:</strong> setup + team alignment</li>
-              <li><strong>During service:</strong> staff signals for smooth operations</li>
-              <li><strong>After closing:</strong> review + reflection</li>
-              <li><strong>Success criteria:</strong> goals for effective opening day</li>
-            </ul>
-          </div>
-        </div>
-      </div>
-    </section>
+      // wire view-specific events
+      wireEvents();
+    }
 
-    <!-- PRICING / FINANCIALS -->
-    <section id="pricing" class="section alt">
-      <div class="container">
-        <h2>Revenue & profitability model</h2>
-        <div class="three-col">
-          <div class="card">
-            <h3>Pricing (per store)</h3>
-            <p class="big"><strong>$300</strong> / month</p>
-            <p class="mini">$3,600 / year. Volume: $250 / month for large chains.</p>
-          </div>
+    function wireEvents() {
+      // Kitchen regenerate
+      const regen = $("#regenAlerts");
+      if (regen) {
+        regen.onclick = () => {
+          // tweak data slightly by regenerating only current location
+          const loc = WA_LOCATIONS.find(x=>x.id===state.locId);
+          state.allData[loc.id] = genLocationData(loc);
+          render();
+        };
+      }
 
-          <div class="card">
-            <h3>Customer ROI</h3>
-            <ul>
-              <li>Avg waste: <strong>$37,500</strong> / year</li>
-              <li>25% reduction → <strong>$9,375</strong> saved</li>
-              <li>~<strong>2.6×</strong> ROI minimum</li>
-            </ul>
-          </div>
+      // Reorder
+      const recalc = $("#recalcReorder");
+      if (recalc) recalc.onclick = () => { state.reorderQty = {}; render(); };
 
-          <div class="card">
-            <h3>Adoption path</h3>
-            <p><strong>Land → Prove → Expand</strong></p>
-            <p class="mini">Pilot → proof of savings → 40-store rollout → multi-region expansion</p>
-          </div>
-        </div>
+      const submit = $("#submitReorder");
+      if (submit) submit.onclick = () => { state.reorderSubmitted = true; render(); };
 
-        <div class="panel mt">
-          <h3>ARR projection</h3>
-          <div class="table">
-            <div class="row head"><div>Year</div><div>Stores</div><div>ARR</div></div>
-            <div class="row"><div>Y1</div><div>150</div><div>~$540K</div></div>
-            <div class="row"><div>Y2</div><div>500</div><div>~$1.8M</div></div>
-            <div class="row"><div>Y3</div><div>1,500</div><div>~$5.4M</div></div>
-          </div>
-          <p class="mini mt">
-            We charge a fraction of the value created; the main challenge is sales cycle and implementation change management.
-          </p>
-        </div>
-      </div>
-    </section>
+      const reset = $("#resetReorder");
+      if (reset) reset.onclick = () => { state.reorderSubmitted = false; state.reorderQty = {}; render(); };
 
-    <!-- EMBED DECK -->
-    <section id="deck" class="section">
-      <div class="container">
-        <h2>Deck</h2>
-        <p class="mini">
-          Optional: put your PDF at <code>assets/TheDecoders.pdf</code> to enable the embedded viewer below.
-        </p>
+      document.querySelectorAll("input.qty-in[data-ing]").forEach(inp => {
+        inp.addEventListener("input", (e) => {
+          const id = e.target.getAttribute("data-ing");
+          state.reorderQty[id] = Math.max(0, Number(e.target.value || 0));
+          // update total quickly by re-rendering reorder view only
+          render();
+        });
+      });
 
-        <div class="embed">
-          <iframe
-            title="KitchenGuide Deck"
-            src="assets/TheDecoders.pdf"
-            loading="lazy">
-          </iframe>
-        </div>
+      // Chain metric + clicks
+      const mw = $("#metricWri");
+      const mc = $("#metricConf");
+      if (mw) mw.onclick = () => { state.chainMetric = "wri"; render(); };
+      if (mc) mc.onclick = () => { state.chainMetric = "conf"; render(); };
 
-        <p class="mini mt">
-          If the embed doesn’t load (some browsers block PDFs), link directly:
-          <a href="assets/TheDecoders.pdf">Open the PDF</a>.
-        </p>
-      </div>
-    </section>
+      document.querySelectorAll(".heat-cell[data-loc]").forEach(cell => {
+        cell.addEventListener("click", () => {
+          state.locId = Number(cell.getAttribute("data-loc"));
+          // optional: if you want auto-jump out of chain, keep chain view or switch:
+          // state.view = "dashboard";
+          render();
+        });
+      });
 
-    <footer class="footer">
-      <div class="container footer-inner">
-        <div>
-          <div class="brand small">
-            <span class="brand-mark">KG</span>
-            <span class="brand-name">KitchenGuide</span>
-          </div>
-          <p class="mini">Real-time operational guidance for fast-casual kitchens.</p>
-        </div>
-        <div class="mini">
-          <p><strong>Presented by:</strong> Anjuta, Sunayana, Suneeta, Upendra</p>
-        </div>
-      </div>
-    </footer>
-  </main>
+      document.querySelectorAll("tr[data-loc]").forEach(row => {
+        row.addEventListener("click", () => {
+          state.locId = Number(row.getAttribute("data-loc"));
+          state.view = "dashboard";
+          render();
+        });
+      });
+
+      // Predictions selector
+      document.querySelectorAll(".predPick[data-i]").forEach(p => {
+        p.addEventListener("click", () => {
+          state.predActive = Number(p.getAttribute("data-i"));
+          render();
+        });
+      });
+    }
+
+    // ── SEARCH INPUT ──────────────────────────────────────────────────────────
+    $("#locSearch").addEventListener("input", (e) => {
+      state.search = e.target.value || "";
+      renderLocationList();
+    });
+
+    // ── BOOT ──────────────────────────────────────────────────────────────────
+    function boot() {
+      regenAllData();
+      setClock();
+      render();
+
+      // update clock and lightly refresh data every 60s
+      setInterval(() => {
+        setClock();
+      }, 1000 * 10);
+
+      setInterval(() => {
+        // refresh all data so dashboard looks "live"
+        regenAllData();
+        render();
+      }, 1000 * 60);
+    }
+    boot();
+  </script>
 </body>
 </html>
